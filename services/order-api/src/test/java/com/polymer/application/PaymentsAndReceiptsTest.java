@@ -42,6 +42,7 @@ import com.polymer.domain.identity.Role;
 import com.polymer.domain.identity.UserAccount;
 import com.polymer.domain.payment.CardDetails;
 import com.polymer.domain.payment.Payment;
+import com.polymer.domain.payment.PaymentPolicy;
 import com.polymer.domain.payment.PaymentStatus;
 import com.polymer.domain.store.BusinessHours;
 import com.polymer.domain.store.StoreProfile;
@@ -137,9 +138,11 @@ class PaymentsAndReceiptsTest {
     void yapeRequestsExpireAfterSixtySecondsAndANewOneCanBePaid() {
         PaymentView started = service.startWallet(CUSTOMER, ORDER, PaymentMethod.YAPE);
         assertThat(started.status()).isEqualTo(PaymentStatus.PENDING);
-        assertThat(started.remainingSeconds()).isEqualTo(60);
+        long ttl = PaymentPolicy.WALLET_TTL.toSeconds(); // regla del dominio (hoy 60 s)
+        assertThat(started.remainingSeconds()).isEqualTo(ttl);
+        assertThat(started.ttlSeconds()).isEqualTo(ttl);
         assertThat(started.qrPayload()).startsWith("POLYMER-SANDBOX|YAPE|").contains("118.00");
-        clock.advance(Duration.ofSeconds(45));
+        clock.advance(Duration.ofSeconds(ttl - 15));
         assertThat(service.status(CUSTOMER, ORDER).remainingSeconds()).isEqualTo(15);
         clock.advance(Duration.ofSeconds(15));
         assertThatThrownBy(() -> service.confirmWallet(CUSTOMER, ORDER, started.paymentId(), "987654321", "123456"))
@@ -147,7 +150,7 @@ class PaymentsAndReceiptsTest {
         assertThat(service.status(CUSTOMER, ORDER).status()).isEqualTo(PaymentStatus.EXPIRED);
         verify(telemetry).payment("YAPE", "expired");
         PaymentView fresh = service.startWallet(CUSTOMER, ORDER, PaymentMethod.YAPE);
-        clock.advance(Duration.ofSeconds(20));
+        clock.advance(Duration.ofSeconds(Math.min(20, ttl - 1)));
         PaymentView paid = service.confirmWallet(CUSTOMER, ORDER, fresh.paymentId(), "+51 987 654 321", "123456");
         assertThat(paid.status()).isEqualTo(PaymentStatus.PAID);
         assertThat(paid.reference()).startsWith("YAPE-");

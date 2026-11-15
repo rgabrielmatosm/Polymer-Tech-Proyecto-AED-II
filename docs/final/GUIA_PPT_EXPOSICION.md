@@ -8,6 +8,8 @@ Cada diapositiva indica qué decir, **qué enlace abrir** (el mismo que muestra 
 > **Antes de capturar:** `.\polymer.cmd enlaces` (todos los enlaces en verde) y `.\polymer.cmd demo -Scenario preparar`.
 > En `ENLACES.html` escribe en «Expone» el nombre del integrante de cada slice: se guarda en tu navegador.
 
+> **Material de fondo:** `DEFENSA_POLYMER.md` (explicación completa con archivos y líneas) y `diagramas/` (draw.io y PNG listos para pegar en la PPT: `POLYMER-arquitectura-hexagonal.png`, `POLYMER-contenedores.png`, `POLYMER-modelo-datos.png`).
+
 ## Reparto sugerido por slice
 
 Cada slice tiene un **rol que lo verifica** dentro del sistema. Ese rol es la cuenta con la que se demuestra:

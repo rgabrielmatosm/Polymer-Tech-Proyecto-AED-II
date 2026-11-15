@@ -103,9 +103,11 @@ class SignInPaymentStoreDomainTest {
     void walletRequestsLiveSixtySecondsAndHaveALimit() {
         Payment yape = Payment.wallet(UUID.randomUUID(), UUID.randomUUID(), PaymentMethod.YAPE, new BigDecimal("150.00"), "PEN", NOW);
         assertThat(yape.status()).isEqualTo(PaymentStatus.PENDING);
-        assertThat(yape.expiresAt()).isEqualTo(NOW.plus(PaymentPolicy.WALLET_TTL)).isEqualTo(NOW.plusSeconds(60));
-        assertThat(yape.windowElapsed(NOW.plusSeconds(59))).isFalse();
-        assertThat(yape.windowElapsed(NOW.plusSeconds(60))).isTrue();
+        // La vigencia sale de la regla del dominio (PaymentPolicy.WALLET_TTL, hoy 60 s): cambiarla allí basta.
+        long ttl = PaymentPolicy.WALLET_TTL.toSeconds();
+        assertThat(yape.expiresAt()).isEqualTo(NOW.plus(PaymentPolicy.WALLET_TTL)).isEqualTo(NOW.plusSeconds(ttl));
+        assertThat(yape.windowElapsed(NOW.plusSeconds(ttl - 1))).isFalse();
+        assertThat(yape.windowElapsed(NOW.plusSeconds(ttl))).isTrue();
         assertThat(yape.expired().status()).isEqualTo(PaymentStatus.EXPIRED);
         assertThatThrownBy(() -> Payment.wallet(UUID.randomUUID(), UUID.randomUUID(), PaymentMethod.PLIN, new BigDecimal("2000.01"), "PEN", NOW))
                 .hasMessageContaining("2000");

@@ -526,6 +526,8 @@ Mailpit, las pasarelas de prueba y una dirección de demostración.
 
 ## 21. v9: Google (iniciar sesión vs registrarse), testimonios, sonido e intro
 
+> **Para la defensa ante el profesor:** [`docs/final/DEFENSA_POLYMER.md`](docs/final/DEFENSA_POLYMER.md) (teoría, enfoque AED, slices por capa, los 13 contenedores, origen de los datos de Grafana, TTL, demostraciones con cambios de código y «¿qué pasaría si…?») y los diagramas editables en [`docs/final/diagramas/`](docs/final/diagramas/) (draw.io, SVG y PNG).
+
 | Novedad | Qué hace |
 | --- | --- |
 | **Iniciar sesión con Google** | Google muestra **«Elige una cuenta»** (`prompt=select_account`). Si esa cuenta de Google no tiene cuenta POLYMER (ni vinculada ni con el mismo correo) **se rechaza** y la página invita a registrarse |

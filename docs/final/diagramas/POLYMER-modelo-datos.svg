@@ -1,0 +1,244 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1540" height="1070" viewBox="0 0 1540 1070" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+<rect width="1540" height="1070" fill="#FFFFFF"/>
+<rect x="330" y="330" width="260" height="134" fill="#FFFFFF" stroke="#334155"/>
+<rect x="330" y="330" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="40" y="450" width="260" height="134" fill="#FFFFFF" stroke="#334155"/>
+<rect x="40" y="450" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="1240" y="560" width="260" height="134" fill="#FFFFFF" stroke="#334155"/>
+<rect x="1240" y="560" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="640" y="330" width="260" height="134" fill="#FFFFFF" stroke="#334155"/>
+<rect x="640" y="330" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="940" y="330" width="260" height="134" fill="#FFFFFF" stroke="#334155"/>
+<rect x="940" y="330" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="40" y="630" width="260" height="116" fill="#FFFFFF" stroke="#334155"/>
+<rect x="40" y="630" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="1240" y="330" width="260" height="116" fill="#FFFFFF" stroke="#334155"/>
+<rect x="1240" y="330" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="640" y="600" width="260" height="116" fill="#FFFFFF" stroke="#334155"/>
+<rect x="640" y="600" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="330" y="90" width="260" height="116" fill="#FFFFFF" stroke="#334155"/>
+<rect x="330" y="90" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="40" y="310" width="260" height="98" fill="#FFFFFF" stroke="#334155"/>
+<rect x="40" y="310" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="1240" y="90" width="260" height="98" fill="#FFFFFF" stroke="#334155"/>
+<rect x="1240" y="90" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="640" y="90" width="260" height="98" fill="#FFFFFF" stroke="#334155"/>
+<rect x="640" y="90" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="940" y="210" width="260" height="98" fill="#FFFFFF" stroke="#334155"/>
+<rect x="940" y="210" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="940" y="560" width="260" height="98" fill="#FFFFFF" stroke="#334155"/>
+<rect x="940" y="560" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="1240" y="760" width="260" height="80" fill="#FFFFFF" stroke="#334155"/>
+<rect x="1240" y="760" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="330" y="560" width="260" height="80" fill="#FFFFFF" stroke="#334155"/>
+<rect x="330" y="560" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="940" y="700" width="260" height="80" fill="#FFFFFF" stroke="#334155"/>
+<rect x="940" y="700" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="330" y="900" width="260" height="80" fill="#FFFFFF" stroke="#334155"/>
+<rect x="330" y="900" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="330" y="760" width="260" height="80" fill="#FFFFFF" stroke="#334155"/>
+<rect x="330" y="760" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="40" y="830" width="260" height="80" fill="#FFFFFF" stroke="#334155"/>
+<rect x="40" y="830" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="40" y="90" width="260" height="62" fill="#FFFFFF" stroke="#334155"/>
+<rect x="40" y="90" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="40" y="210" width="260" height="62" fill="#FFFFFF" stroke="#334155"/>
+<rect x="40" y="210" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="940" y="90" width="260" height="62" fill="#FFFFFF" stroke="#334155"/>
+<rect x="940" y="90" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="940" y="860" width="260" height="62" fill="#FFFFFF" stroke="#334155"/>
+<rect x="940" y="860" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<rect x="1240" y="900" width="260" height="44" fill="#FFFFFF" stroke="#334155"/>
+<rect x="1240" y="900" width="260" height="22" fill="#E2E8F0" stroke="#334155"/>
+<line x1="202.6" y1="152.0" x2="389.6" y2="330.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="282.8" y="232.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="296.1" y="244.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="227.6" y1="272.0" x2="335.4" y2="330.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="268.2" y="292.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="281.5" y="304.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="300.0" y1="376.0" x2="330.0" y2="380.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="301.7" y="369.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="315.0" y="381.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="300.0" y1="463.2" x2="330.0" y2="450.8" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="301.7" y="448.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="315.0" y="460.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="227.8" y1="630.0" x2="393.2" y2="464.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="297.2" y="538.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="310.5" y="550.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="460.0" y1="560.0" x2="460.0" y2="464.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="446.7" y="503.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="460.0" y="515.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="590.0" y1="603.9" x2="1240.0" y2="623.1" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="901.7" y="604.5" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="915.0" y="616.5" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="460.0" y1="206.0" x2="460.0" y2="330.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="446.7" y="259.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="460.0" y="271.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="640.0" y1="397.0" x2="590.0" y2="397.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="601.7" y="388.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="615.0" y="400.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="770.0" y1="600.0" x2="770.0" y2="464.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="756.7" y="523.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="770.0" y="535.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="900.0" y1="651.3" x2="1240.0" y2="633.7" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="1056.7" y="633.5" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="1070.0" y="645.5" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="770.0" y1="188.0" x2="770.0" y2="330.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="756.7" y="250.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="770.0" y="262.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="1036.3" y1="152.0" x2="842.8" y2="330.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="926.3" y="232.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="939.6" y="244.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="963.5" y1="308.0" x2="900.0" y2="337.2" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="918.4" y="313.6" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="931.7" y="325.6" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="940.0" y1="397.0" x2="900.0" y2="397.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="906.7" y="388.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="920.0" y="400.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="1000.7" y1="560.0" x2="864.8" y2="464.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="919.4" y="503.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="932.7" y="515.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="940.0" y1="563.8" x2="590.0" y2="442.2" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="751.7" y="494.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="765.0" y="506.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="1070.0" y1="700.0" x2="1070.0" y2="658.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="1056.7" y="670.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="1070.0" y="682.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="482.8" y1="900.0" x2="731.7" y2="464.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="594.0" y="673.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="607.3" y="685.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="1370.0" y1="560.0" x2="1370.0" y2="446.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="1356.7" y="494.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="1370.0" y="506.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="1370.0" y1="760.0" x2="1370.0" y2="188.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="1356.7" y="465.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="1370.0" y="477.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<line x1="1370.0" y1="760.0" x2="1370.0" y2="694.0" stroke="#64748B" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="1356.7" y="718.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="1370.0" y="730.0" font-size="11" fill="#334155" text-anchor="middle">N:1</text>
+<text x="770.0" y="43.7" font-size="22" font-weight="bold" fill="#0F172A" text-anchor="middle">POLYMER · Modelo de datos en PostgreSQL (25 tablas, migraciones Flyway V1…V13)</text>
+<text x="770.0" y="1051.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Mensajería: outbox_published (eventos publicados) y processed_events (eventos ya consumidos: idempotencia). Las FK apuntan del hijo (N) al padre (1). order_lines.promotion_id → promotions (promoción aplicada).</text>
+<text x="340.0" y="349.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">app_users</text>
+<text x="340.0" y="363.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="340.0" y="378.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">username UK</text>
+<text x="340.0" y="392.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">email</text>
+<text x="340.0" y="407.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">password_hash</text>
+<text x="340.0" y="421.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">email_verified</text>
+<text x="340.0" y="436.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">two_factor</text>
+<text x="50.0" y="469.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">verification_challenges</text>
+<text x="50.0" y="483.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="50.0" y="498.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id FK</text>
+<text x="50.0" y="512.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">purpose</text>
+<text x="50.0" y="527.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">code_hash</text>
+<text x="50.0" y="541.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">expires_at (TTL 10 min)</text>
+<text x="50.0" y="556.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">attempts_left</text>
+<text x="1250.0" y="579.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">products</text>
+<text x="1250.0" y="593.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="1250.0" y="608.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">sku UK</text>
+<text x="1250.0" y="622.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">name</text>
+<text x="1250.0" y="637.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">brand · model</text>
+<text x="1250.0" y="651.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">category_id FK</text>
+<text x="1250.0" y="666.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">price · stock</text>
+<text x="650.0" y="349.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">orders</text>
+<text x="650.0" y="363.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK (uuid)</text>
+<text x="650.0" y="378.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_number UK</text>
+<text x="650.0" y="392.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id FK</text>
+<text x="650.0" y="407.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">amount · risk_score</text>
+<text x="650.0" y="421.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">status · fulfillment_status</text>
+<text x="650.0" y="436.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">idempotency_key UK</text>
+<text x="950.0" y="349.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">payments</text>
+<text x="950.0" y="363.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK (uuid)</text>
+<text x="950.0" y="378.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_id FK</text>
+<text x="950.0" y="392.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">method · status</text>
+<text x="950.0" y="407.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">expires_at (TTL 60 s)</text>
+<text x="950.0" y="421.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">card_brand · card_last4</text>
+<text x="950.0" y="436.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">receipt_series · number</text>
+<text x="50.0" y="649.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">device_tokens</text>
+<text x="50.0" y="663.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">kind PK</text>
+<text x="50.0" y="678.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">series PK</text>
+<text x="50.0" y="692.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">token_hash</text>
+<text x="50.0" y="707.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id FK</text>
+<text x="50.0" y="721.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">expires_at (30 días)</text>
+<text x="1250.0" y="349.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">categories</text>
+<text x="1250.0" y="363.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="1250.0" y="378.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">slug UK</text>
+<text x="1250.0" y="392.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">name</text>
+<text x="1250.0" y="407.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">parent_id FK (árbol)</text>
+<text x="1250.0" y="421.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">position</text>
+<text x="650.0" y="619.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">order_lines</text>
+<text x="650.0" y="633.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_id PK,FK</text>
+<text x="650.0" y="648.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">line_no PK</text>
+<text x="650.0" y="662.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">product_id FK</text>
+<text x="650.0" y="677.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">unit_price · quantity</text>
+<text x="650.0" y="691.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">promotion_id FK</text>
+<text x="340.0" y="109.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">testimonials</text>
+<text x="340.0" y="123.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="340.0" y="138.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">kind (TEAM/CUSTOMER)</text>
+<text x="340.0" y="152.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id FK UK</text>
+<text x="340.0" y="167.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">comment · rating</text>
+<text x="340.0" y="181.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">linkedin_url · visible</text>
+<text x="50.0" y="329.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">user_identities</text>
+<text x="50.0" y="343.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">provider PK</text>
+<text x="50.0" y="358.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">subject PK</text>
+<text x="50.0" y="372.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id FK</text>
+<text x="50.0" y="387.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">email</text>
+<text x="1250.0" y="109.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">promotions</text>
+<text x="1250.0" y="123.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="1250.0" y="138.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">slug UK</text>
+<text x="1250.0" y="152.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">discount_percent</text>
+<text x="1250.0" y="167.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">starts_at · ends_at</text>
+<text x="650.0" y="109.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">order_status_history</text>
+<text x="650.0" y="123.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="650.0" y="138.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_id FK</text>
+<text x="650.0" y="152.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">from_status → to_status</text>
+<text x="650.0" y="167.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">actor · changed_at</text>
+<text x="950.0" y="229.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">order_checkout</text>
+<text x="950.0" y="243.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_id PK,FK</text>
+<text x="950.0" y="258.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">delivery_method</text>
+<text x="950.0" y="272.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">payment_method</text>
+<text x="950.0" y="287.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">subtotal · total</text>
+<text x="950.0" y="579.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">deliveries</text>
+<text x="950.0" y="593.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="950.0" y="608.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_id FK</text>
+<text x="950.0" y="622.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">assignee_id FK</text>
+<text x="950.0" y="637.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">window_start · window_end</text>
+<text x="1250.0" y="779.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">promotion_targets</text>
+<text x="1250.0" y="793.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">promotion_id FK</text>
+<text x="1250.0" y="808.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">category_id FK</text>
+<text x="1250.0" y="822.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">product_id FK</text>
+<text x="340.0" y="579.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">cart_items</text>
+<text x="340.0" y="593.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id PK,FK</text>
+<text x="340.0" y="608.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">product_id PK,FK</text>
+<text x="340.0" y="622.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">quantity</text>
+<text x="950.0" y="719.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">delivery_changes</text>
+<text x="950.0" y="733.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="950.0" y="748.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">delivery_id FK</text>
+<text x="950.0" y="762.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">action · old/new window</text>
+<text x="340.0" y="919.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">incidents</text>
+<text x="340.0" y="933.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="340.0" y="948.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_id FK</text>
+<text x="340.0" y="962.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">category · status</text>
+<text x="340.0" y="779.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">audit_events</text>
+<text x="340.0" y="793.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="340.0" y="808.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">actor · action</text>
+<text x="340.0" y="822.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">target · details</text>
+<text x="50.0" y="849.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">contact_messages</text>
+<text x="50.0" y="863.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">id PK</text>
+<text x="50.0" y="878.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">name · email</text>
+<text x="50.0" y="892.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">topic · message</text>
+<text x="50.0" y="109.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">app_user_roles</text>
+<text x="50.0" y="123.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id PK,FK</text>
+<text x="50.0" y="138.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">role PK</text>
+<text x="50.0" y="229.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">user_preferences</text>
+<text x="50.0" y="243.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">user_id PK,FK</text>
+<text x="50.0" y="258.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">language</text>
+<text x="950.0" y="109.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">order_shipping</text>
+<text x="950.0" y="123.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">order_id PK,FK</text>
+<text x="950.0" y="138.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">recipient · address · city</text>
+<text x="950.0" y="879.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">processed_events</text>
+<text x="950.0" y="893.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">event_id PK</text>
+<text x="950.0" y="908.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">consumer PK</text>
+<text x="1250.0" y="919.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="start">outbox_published</text>
+<text x="1250.0" y="933.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">event_id PK</text>
+</svg>

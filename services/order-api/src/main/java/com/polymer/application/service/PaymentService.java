@@ -215,7 +215,8 @@ public final class PaymentService implements PaymentUseCases {
         int declined = (int) history.stream().filter(p -> p.status() == PaymentStatus.DECLINED).count();
         if (latest == null) {
             return new PaymentView(order.id(), chosen == null ? null : chosen.name(), chosen != null && chosen.online(), order.amount(),
-                    order.currency(), null, null, null, null, 0, null, null, null, null, null, null, null, declined, sandbox);
+                    order.currency(), null, null, null, null, 0, null, null, null, null, null, null, null, declined, sandbox,
+                    PaymentPolicy.WALLET_TTL.toSeconds());
         }
         boolean pendingWallet = latest.status() == PaymentStatus.PENDING && latest.expiresAt() != null;
         return new PaymentView(order.id(), chosen == null ? null : chosen.name(), chosen != null && chosen.online(), order.amount(),
@@ -223,7 +224,7 @@ public final class PaymentService implements PaymentUseCases {
                 pendingWallet ? window.remainingSeconds(latest.id(), latest.expiresAt()) : 0,
                 pendingWallet ? wallets.qrPayload(latest.method(), latest.id(), latest.amount(), latest.currency()) : null,
                 latest.reference(), latest.cardBrand(), latest.cardLast4(), latest.failureCode(), latest.paidAt(),
-                latest.receipt() == null ? null : latest.receipt().code(), declined, sandbox);
+                latest.receipt() == null ? null : latest.receipt().code(), declined, sandbox, PaymentPolicy.WALLET_TTL.toSeconds());
     }
 
     private static String shortId(UUID id) { return id.toString().substring(0, 8).toUpperCase(java.util.Locale.ROOT); }

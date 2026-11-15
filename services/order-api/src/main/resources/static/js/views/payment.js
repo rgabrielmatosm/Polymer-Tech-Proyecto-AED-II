@@ -95,12 +95,14 @@ route('/pago/:id', async (root, { id }) => {
   let countdown = null;
   let syncer = null;
   const stopTimers = () => { window.clearInterval(countdown); window.clearInterval(syncer); };
+  // Vigencia de Yape/Plin definida en el dominio (PaymentPolicy.WALLET_TTL); la interfaz no la repite.
+  const ttl = () => Number(status.ttlSeconds) || 60;
 
   const tabs = el('div', { class: 'pay-tabs', role: 'tablist', 'aria-label': t('Método de pago') }, methods.map((m) => el('button', {
     type: 'button', role: 'tab', class: 'pay-tab', 'data-method': m, 'aria-selected': String(m === current),
     onclick: () => { if (m !== current) { current = m; render(); } },
   }, el('span', { class: `pay-tab__logo pay-tab__logo--${m.toLowerCase()}`, 'aria-hidden': 'true', text: m === 'CARD' ? '💳' : m === 'YAPE' ? 'Y' : 'P' }),
-  el('span', { text: METHOD_LABELS[m] }), el('small', { text: m === 'CARD' ? t('Inmediato') : t('QR · 60 s') }))));
+  el('span', { text: METHOD_LABELS[m] }), el('small', { text: m === 'CARD' ? t('Inmediato') : t('QR · {0} s', ttl()) }))));
 
   function render() {
     stopTimers();
@@ -196,14 +198,14 @@ route('/pago/:id', async (root, { id }) => {
       const wasDeclined = status.method === method && status.status === 'DECLINED';
       box.append(
         expired ? el('div', { class: 'notice-box notice-box--warn', 'data-testid': 'wallet-expired' }, el('strong', { text: t('El código QR venció. ') }),
-          t('Las solicitudes de {0} valen 60 segundos. Genera una nueva para pagar.', name)) : null,
+          t('Las solicitudes de {0} valen {1} segundos. Genera una nueva para pagar.', name, ttl())) : null,
         wasDeclined ? declined(status) : null,
-        el('p', { text: t('Generaremos una solicitud de cobro de {0} por {1}. Tendrás 60 segundos para aprobarla desde tu app.', name, amount) }),
+        el('p', { text: t('Generaremos una solicitud de cobro de {0} por {1}. Tendrás {2} segundos para aprobarla desde tu app.', name, amount, ttl()) }),
         generate, errorNode, sandboxNote(method));
       return box;
     }
     let left = Math.max(0, Number(status.remainingSeconds) || 0);
-    const total = 60;
+    const total = ttl();
     const seconds = el('strong', { class: 'ttl-ring__value', 'data-testid': 'wallet-seconds' });
     const ring = el('div', { class: 'ttl-ring', role: 'timer', 'aria-label': t('Tiempo restante') }, seconds, el('small', { text: t('segundos') }));
     const phone = el('input', { type: 'tel', inputmode: 'numeric', autocomplete: 'tel-national', maxlength: '11', placeholder: '987 654 321' });
@@ -253,7 +255,7 @@ route('/pago/:id', async (root, { id }) => {
       el('div', { class: `wallet__qr wallet__qr--${method.toLowerCase()}` },
         el('div', { class: 'wallet__code', 'data-testid': 'wallet-qr' }, qrSvg(status.qrPayload)),
         el('div', { class: 'wallet__aside' }, ring,
-          el('p', { class: 'small', text: t('Escanea el código con {0} o confirma con tu celular y el código de tu app. La solicitud vence en 60 segundos.', name) }))),
+          el('p', { class: 'small', text: t('Escanea el código con {0} o confirma con tu celular y el código de tu app. La solicitud vence en {1} segundos.', name, ttl()) }))),
       form, sandboxNote(method));
     draw();
     return box;
