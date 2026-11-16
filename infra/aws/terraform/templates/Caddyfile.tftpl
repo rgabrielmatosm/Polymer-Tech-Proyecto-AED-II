@@ -1,0 +1,23 @@
+# POLYMER · borde HTTPS (Caddy). Certificado de Let's Encrypt automático y renovado solo; HTTP → HTTPS.
+%{ if letsencrypt_email != "" ~}
+{
+	email ${letsencrypt_email}
+}
+%{ endif ~}
+
+${domain} {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+
+	# API original del laboratorio (POST /api/orders sin sesión): no se expone a Internet.
+	@lab path /api/orders /api/orders/*
+	respond @lab "No disponible" 403
+
+	reverse_proxy 127.0.0.1:8080
+
+	# Mientras POLYMER compila y arranca (primer despliegue o actualización).
+	handle_errors 502 503 504 {
+		header Retry-After 60
+		respond "POLYMER se está iniciando. Vuelve a cargar en unos minutos." 503
+	}
+}

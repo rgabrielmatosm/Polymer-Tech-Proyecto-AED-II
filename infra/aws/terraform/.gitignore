@@ -1,0 +1,9 @@
+# Estado y artefactos locales de Terraform: pueden contener IDs de tu cuenta. Nunca a Git.
+.terraform/
+.build/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+crash.log

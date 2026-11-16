@@ -491,6 +491,7 @@ Documentos en [`docs/final/`](docs/final/):
 | [`GUIA_DOCKER_WINDOWS.md`](docs/final/GUIA_DOCKER_WINDOWS.md) | Contenedores, comandos, reconstrucción, restauración y errores |
 | [`MAPA_SLICES_FUNCIONALES.md`](docs/final/MAPA_SLICES_FUNCIONALES.md) | Rol → página → endpoint → caso de uso → puertos → tablas → métricas |
 | [`GUIA_GITHUB.md`](docs/final/GUIA_GITHUB.md) | Revisión de seguridad y publicación en un repositorio nuevo |
+| [`DESPLIEGUE_AWS_TERRAFORM.md`](docs/final/DESPLIEGUE_AWS_TERRAFORM.md) | v11: Terraform (EC2 + IP elástica + Caddy/Let's Encrypt + SSM, sin SSH), plan gratuito, costos, actualización y destroy |
 | [`DESPLIEGUE_AWS_HTTPS.md`](docs/final/DESPLIEGUE_AWS_HTTPS.md) | EC2 + Docker Compose + Nginx con Let's Encrypt; costos, seguridad, copias, actualización y rollback |
 | [`MATRIZ_PRUEBAS.md`](docs/final/MATRIZ_PRUEBAS.md) · [`RESULTADOS_VALIDACION.md`](docs/final/RESULTADOS_VALIDACION.md) | Qué se prueba, dónde y con qué resultado real |
 
@@ -536,6 +537,18 @@ Mailpit, las pasarelas de prueba y una dirección de demostración.
 | **Testimonios** (slice nuevo) | Carrusel en la portada y en **Nosotros**: el equipo (foto → perfil de **LinkedIn** → comentario) y los clientes. Formulario «Deja tu testimonio» (clientes con sesión, uno por cuenta, editable); la administración los oculta o muestra. Hexagonal: `Testimonial` (dominio) → `TestimonialUseCases`/`TestimonialService` → `TestimonialRepository`/`JdbcTestimonialRepository`; Flyway **V13** |
 | **Intro y sonido** | Intro sin botones; **sonido activado por defecto** (los navegadores lo permiten desde el primer clic o tecla); sin altavoz en la cabecera ni «Pausar video»: el interruptor de sonido está en el pie |
 | **Más movimiento** | Panel de acceso y registro con órbita animada, ventajas, cifras y un testimonio que rota; brillo en botones, entrada animada de secciones y sonidos suaves al pulsar, añadir al carrito o publicar |
+
+## 22. v11: despliegue en AWS con Terraform y HTTPS
+
+[`infra/aws/terraform/`](infra/aws/terraform) crea con `terraform apply` una instancia EC2 (Ubuntu 24.04, disco
+cifrado, IMDSv2, **sin SSH**: Session Manager) con IP elástica, grupo de seguridad **solo 80/443**, bucket S3
+privado con el código **sin secretos** y, opcionalmente, el JSON de Google desde SSM Parameter Store y una
+alerta de presupuesto. Caddy obtiene el certificado de **Let's Encrypt** solo (con tu dominio o, sin dominio,
+`<ip>.sslip.io`) y publica la tienda por **HTTPS**; Grafana, RabbitMQ y Mailpit se abren por túnel SSM.
+Pensado para el **plan gratuito** de cuentas creadas desde el 15/07/2025 (`m7i-flex.large` + modo full).
+Guía: [`docs/final/DESPLIEGUE_AWS_TERRAFORM.md`](docs/final/DESPLIEGUE_AWS_TERRAFORM.md). El CI (job
+`terraform-aws`) ejecuta `fmt`, `validate`, `terraform test` con proveedor simulado y `caddy validate`; ningún
+recurso de AWS se crea sin que tú ejecutes `apply`.
 
 ## Anexo A. API
 

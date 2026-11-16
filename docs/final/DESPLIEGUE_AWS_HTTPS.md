@@ -1,5 +1,9 @@
 # Despliegue de POLYMER en AWS con HTTPS
 
+> **v11 · Automatizado con Terraform:** [`DESPLIEGUE_AWS_TERRAFORM.md`](DESPLIEGUE_AWS_TERRAFORM.md) crea todo
+> (EC2, IP elástica, HTTPS con Caddy + Let's Encrypt, sin SSH) con `terraform apply`, incluida la opción del
+> plan gratuito de AWS. Esta guía describe el mismo diseño hecho a mano (Nginx del host + certbot).
+
 > **Estado:** diseño y archivos preparados y probados localmente (sintaxis y comportamiento del Nginx del
 > host). **No se ha creado ningún recurso de AWS** ni se ha desplegado nada: requiere tu aprobación, tu
 > cuenta y, para HTTPS con Let's Encrypt, un dominio. Ningún comando de esta guía se ejecuta solo.
