@@ -1,4 +1,4 @@
-# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 0e90da18602650d89ec03eafb72f35b950240ca08cbd6be6510ef05613c7b033
+# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo c227c14944120111c23767f29f5b73bc0a7d87e0fb5c2f3bf146d3cd0aa415c6
 # POLYMER — entregar docker-compose.yml, generado desde este archivo.
 # Docker Compose >= 2.23.1 + BuildKit + contenedores Linux.
 # Arquitectura: las dependencias del código apuntan hacia domain/application.
@@ -2053,36 +2053,38 @@ services:
             }
         }
         EventContract.java
-        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
+        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
         LegacyTopologyMigration.java.gz.b64
         RUN cd src/main/java/com/polymer/adapter/messaging && base64 -d LegacyTopologyMigration.java.gz.b64 | gunzip > LegacyTopologyMigration.java && rm LegacyTopologyMigration.java.gz.b64
         COPY <<'RedisCatalogCache.java.gz.b64' <<'RedisPaymentWindow.java' src/main/java/com/polymer/adapter/out/cache/
@@ -22409,33 +22411,34 @@ services:
         LocalizedPagesTest.java.gz.b64
         RUN cd src/test/java/com/polymer/adapter/in/web/i18n && base64 -d LocalizedPagesTest.java.gz.b64 | gunzip > LocalizedPagesTest.java && rm LocalizedPagesTest.java.gz.b64
         COPY <<'LegacyTopologyMigrationTest.java.gz.b64' src/test/java/com/polymer/adapter/messaging/
-        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
-        oRQAAA==
+        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
+        sGkoFQAA
         LegacyTopologyMigrationTest.java.gz.b64
         RUN cd src/test/java/com/polymer/adapter/messaging && base64 -d LegacyTopologyMigrationTest.java.gz.b64 | gunzip > LegacyTopologyMigrationTest.java && rm LegacyTopologyMigrationTest.java.gz.b64
         COPY <<'CommerceServiceTest.java.gz.b64' <<'IntegrationServicesTest.java.gz.b64' <<'OperationsAndLogisticsTest.java.gz.b64' <<'OrderServiceTest.java.gz.b64' <<'PaymentsAndReceiptsTest.java.gz.b64' <<'SignInServiceTest.java.gz.b64' <<'TechStoreServicesTest.java.gz.b64' <<'TestimonialServiceTest.java.gz.b64' <<'WebPlatformServicesTest.java.gz.b64' src/test/java/com/polymer/application/
