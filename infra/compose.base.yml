@@ -302,7 +302,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
-      - '127.0.0.1:15672:15672'  # consola de gestión (usuario polymer, secrets\rabbitmq_password.txt)
+      - '127.0.0.1:15672:15672'  # consola de gestión (usuario hexaorders, secrets\rabbitmq_password.txt)
     networks: [edge, messaging, telemetry]
     read_only: true
     tmpfs: ['/tmp:rw,nosuid,size=32m', '/etc/rabbitmq/conf.d:rw,noexec,nosuid,size=1m']

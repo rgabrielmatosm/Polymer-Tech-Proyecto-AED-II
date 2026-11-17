@@ -1,4 +1,4 @@
-# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 436f55ce6e63243497629b8f51f890eba17d8807c0dc3588b309ea3f32448cf6
+# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 06d33a34fd39442fa1edcbf45484b2807ac9b4eb630608de0a975d49ac9b2ae0
 # POLYMER — entregar docker-compose.yml, generado desde este archivo.
 # Docker Compose >= 2.23.1 + BuildKit + contenedores Linux.
 # Arquitectura: las dependencias del código apuntan hacia domain/application.
@@ -41353,7 +41353,7 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
-      - '127.0.0.1:15672:15672'  # consola de gestión (usuario polymer, secrets\rabbitmq_password.txt)
+      - '127.0.0.1:15672:15672'  # consola de gestión (usuario hexaorders, secrets\rabbitmq_password.txt)
     networks: [edge, messaging, telemetry]
     read_only: true
     tmpfs: ['/tmp:rw,nosuid,size=32m', '/etc/rabbitmq/conf.d:rw,noexec,nosuid,size=1m']

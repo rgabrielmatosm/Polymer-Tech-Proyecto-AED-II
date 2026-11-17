@@ -55,7 +55,7 @@ CONTAINERS = [
              'Docker Desktop → redis → Exec → redis-cli.',
      'url': None, 'check': None, 'mode': 'full'},
     {'id': 'rabbitmq', 'name': 'rabbitmq', 'layer': 'Adaptador de salida (eventos)',
-     'what': 'Consola: exchange, cola de notificaciones y DLQ. Usuario hexaorders (o polymer), contraseña en secrets\\rabbitmq_password.txt.',
+     'what': 'Consola: exchange, cola de notificaciones y DLQ. Usuario hexaorders, contraseña en secrets\\rabbitmq_password.txt.',
      'url': 'http://localhost:15672/#/queues/%2F/hexaorders.notifications', 'check': 'http://127.0.0.1:15672/', 'mode': 'full'},
     {'id': 'mailpit', 'name': 'mailpit', 'layer': 'SMTP de desarrollo',
      'what': 'Bandeja local: códigos de 6 dígitos, boletas y avisos de pedidos (si no configuras Gmail).',
