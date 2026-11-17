@@ -8,7 +8,7 @@
   3 · Entidad-relación              Las 25 tablas de PostgreSQL (contenedor db), reutilizando generate_diagrams.er().
 
 Todo lo que aparece sale del código: infra/compose.base.yml (redes, puertos, volúmenes) e infra/aws/terraform.
-Uso: python tools/diagramas/generate_aws_diagram.py
+Uso: python tools/diagramas/generate_aws_diagram.py [--lang en]   (en inglés: docs/final/diagramas/en/)
 """
 from __future__ import annotations
 
@@ -72,15 +72,18 @@ def edge(color: str, dashed: bool = False, width: int = 1, curved: bool = False)
 
 class Diagram:
     def __init__(self, name: str, width: int, height: int, prefix: str):
-        self.name, self.width, self.height, self.p = name, width, height, prefix
+        self.name, self.width, self.height, self.p = base.tr(name), width, height, prefix
         self.cells: list[str] = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>']
         self.ids: set[str] = set()
+        self.labels: list[str] = [self.name]
 
     def _id(self, i: str) -> str:
         return f'{self.p}_{i}'
 
     def v(self, i: str, label: str, style: str, x: float, y: float, w: float, h: float, parent: str | None = None) -> str:
         assert i not in self.ids, i
+        label = base.tr(label)
+        self.labels.append(label)
         self.ids.add(i)
         par = self._id(parent) if parent else '1'
         self.cells.append(f'<mxCell id="{self._id(i)}" value="{html.escape(label, quote=True)}" style="{style}" vertex="1" '
@@ -90,6 +93,8 @@ class Diagram:
     def e(self, a: str, b: str, label: str, style: str, exit_: str = '', entry: str = '',
           points: list[tuple[int, int]] | None = None) -> None:
         assert a in self.ids and b in self.ids, (a, b)
+        label = base.tr(label)
+        self.labels.append(label)
         i = f'e{len(self.cells)}'
         pts = ''
         if points:
@@ -336,14 +341,22 @@ def terraform_page() -> Diagram:
 
 def er_page() -> str:
     xml, _ = base.drawio_page(base.er(), 3)
-    return xml.replace('name="3 · Modelo de datos (E-R)"', 'name="3 · Entidad-relación (PostgreSQL · contenedor db)"', 1)
+    return xml.replace(f'name="{base.tr("3 · Modelo de datos (E-R)")}"', f'name="{base.tr("3 · Entidad-relación (PostgreSQL · contenedor db)")}"', 1)
 
 
-def main() -> None:
-    pages = [aws_page().xml(1), terraform_page().xml(2), er_page()]
-    OUT.write_text('<mxfile host="app.diagrams.net" agent="POLYMER tools/diagramas/generate_aws_diagram.py">'
+def main(argv: list[str] | None = None) -> None:
+    argv = sys.argv[1:] if argv is None else argv
+    base.LANG = 'en' if argv[:2] == ['--lang', 'en'] else 'es'
+    out = base.OUT / 'en' / OUT.name if base.LANG == 'en' else OUT
+    out.parent.mkdir(parents=True, exist_ok=True)
+    aws, tf = aws_page(), terraform_page()
+    if base.LANG == 'en':
+        er = base.er()
+        base.diagram_i18n.check(aws.labels + tf.labels + [n['label'] for n in er.nodes] + [e['label'] for e in er.edges])
+    pages = [aws.xml(1), tf.xml(2), er_page()]
+    out.write_text('<mxfile host="app.diagrams.net" agent="POLYMER tools/diagramas/generate_aws_diagram.py">'
                    + ''.join(pages) + '</mxfile>\n', encoding='utf-8')
-    print(f'OK: {OUT.relative_to(base.ROOT)} ({len(pages)} páginas)')
+    print(f'OK: {out.relative_to(base.ROOT)} ({len(pages)} páginas)')
 
 
 if __name__ == '__main__':

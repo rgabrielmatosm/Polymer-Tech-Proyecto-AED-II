@@ -5,7 +5,8 @@
   docs/final/diagramas/*.svg                          (las mismas páginas como imagen vectorial)
   docs/final/diagramas/ENLACE_DRAWIO.md               (enlace de diagrams.net que abre la arquitectura)
 
-Uso: python tools/diagramas/generate_diagrams.py  (los PNG se obtienen de los SVG con tools/diagramas/render_png.js)
+Uso: python tools/diagramas/generate_diagrams.py [--lang en]  (los PNG se obtienen de los SVG con tools/diagramas/render_png.js)
+Con --lang en escribe las mismas páginas en inglés en docs/final/diagramas/en/ (textos en diagram_i18n.py).
 """
 from __future__ import annotations
 
@@ -13,10 +14,19 @@ import base64
 import html
 import urllib.parse
 import zlib
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import diagram_i18n  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'docs' / 'final' / 'diagramas'
+LANG = 'es'  # 'en': main(['--lang', 'en']) traduce cada texto con diagram_i18n.tr
+
+
+def tr(text: str) -> str:
+    return diagram_i18n.tr(text) if LANG == 'en' else text
 
 # Paleta (tema claro: se imprime bien y se lee en un proyector).
 C = {
@@ -29,15 +39,15 @@ C = {
 
 class Page:
     def __init__(self, name: str, width: int, height: int):
-        self.name, self.width, self.height = name, width, height
+        self.name, self.width, self.height = tr(name), width, height
         self.nodes: list[dict] = []
         self.edges: list[dict] = []
 
     def box(self, nid, label, x, y, w, h, kind, shape='rect', size=13, bold=False, align='center', valign='middle'):
-        self.nodes.append(dict(id=nid, label=label, x=x, y=y, w=w, h=h, kind=kind, shape=shape, size=size, bold=bold, align=align, valign=valign))
+        self.nodes.append(dict(id=nid, label=tr(label), x=x, y=y, w=w, h=h, kind=kind, shape=shape, size=size, bold=bold, align=align, valign=valign))
 
     def edge(self, a, b, label='', dashed=False, color='#334155', horizontal=False):
-        self.edges.append(dict(a=a, b=b, label=label, dashed=dashed, color=color, horizontal=horizontal))
+        self.edges.append(dict(a=a, b=b, label=tr(label), dashed=dashed, color=color, horizontal=horizontal))
 
 
 # ---------------------------------------------------------------- página 1: arquitectura hexagonal
@@ -327,20 +337,52 @@ def compressed(model: str) -> str:
     return base64.b64encode(data).decode('ascii')
 
 
-def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    diagrams, models = [], []
+SLUGS = {'es': ['arquitectura-hexagonal', 'contenedores', 'modelo-datos'], 'en': ['hexagonal-architecture', 'containers', 'data-model']}
+
+
+def main(argv: list[str] | None = None) -> None:
+    global LANG
+    argv = sys.argv[1:] if argv is None else argv
+    LANG = 'en' if argv[:2] == ['--lang', 'en'] else 'es'
+    out = OUT / 'en' if LANG == 'en' else OUT
+    out.mkdir(parents=True, exist_ok=True)
+    diagrams, models, pages = [], [], []
     for i, factory in enumerate(PAGES, 1):
         page = factory()
+        pages.append(page)
         diagram, model = drawio_page(page, i)
         diagrams.append(diagram)
         models.append(model)
-        slug = ['arquitectura-hexagonal', 'contenedores', 'modelo-datos'][i - 1]
-        (OUT / f'POLYMER-{slug}.svg').write_text(svg_page(page), encoding='utf-8')
+        (out / f'POLYMER-{SLUGS[LANG][i - 1]}.svg').write_text(svg_page(page), encoding='utf-8')
+    if LANG == 'en':
+        diagram_i18n.check([p.name for p in pages] + [n['label'] for p in pages for n in p.nodes] + [e['label'] for p in pages for e in p.edges])
     xml = f'<mxfile host="POLYMER" agent="tools/diagramas/generate_diagrams.py" version="24.0.0">{"".join(diagrams)}</mxfile>\n'
-    (OUT / 'POLYMER-arquitectura.drawio').write_text(xml, encoding='utf-8')
+    (out / ('POLYMER-architecture.drawio' if LANG == 'en' else 'POLYMER-arquitectura.drawio')).write_text(xml, encoding='utf-8')
     link = 'https://app.diagrams.net/#R' + urllib.parse.quote(compressed(models[0]), safe='')
-    (OUT / 'ENLACE_DRAWIO.md').write_text(f"""# Abrir los diagramas en draw.io (diagrams.net)
+    if LANG == 'en':
+        (out / 'README.md').write_text(f"""# POLYMER diagrams (English)
+
+Generated from the same definitions as the Spanish diagrams:
+
+    python tools/diagramas/generate_diagrams.py --lang en
+    python tools/diagramas/generate_aws_diagram.py --lang en
+    node tools/diagramas/render_png.js en
+
+| File | Pages |
+| --- | --- |
+| `POLYMER-architecture.drawio` | 1 · Hexagonal architecture · 2 · Docker containers · 3 · Data model (E-R) |
+| `POLYMER-AWS-Terraform.drawio` | 1 · AWS deployment · 2 · Terraform resources · 3 · Entity-relationship |
+| `POLYMER-*.svg` / `POLYMER-*.png` | the architecture pages as images, ready to paste into slides |
+
+**Open in draw.io:** https://app.diagrams.net → *File → Open from → Device* → choose the `.drawio` file. The tabs at the bottom are the pages.
+To paste into a presentation: *File → Export as → PNG* (or use the PNG files in this folder).
+
+**Direct link** (opens page 1 in the browser, the diagram travels inside the link):
+
+{link}
+""", encoding='utf-8')
+    else:
+        (out / 'ENLACE_DRAWIO.md').write_text(f"""# Abrir los diagramas en draw.io (diagrams.net)
 
 **Forma recomendada (los 3 diagramas, editables):**
 
@@ -357,7 +399,7 @@ En **VS Code**: instala la extensión *Draw.io Integration* (hediet.vscode-drawi
 
 > Si el enlace no abre en tu navegador por su longitud, usa la forma recomendada de arriba.
 """, encoding='utf-8')
-    print(f'OK: {OUT.relative_to(ROOT)} (drawio con {len(PAGES)} páginas, {len(PAGES)} SVG, enlace de {len(link)} caracteres)')
+    print(f'OK: {out.relative_to(ROOT)} (drawio con {len(PAGES)} páginas, {len(PAGES)} SVG, enlace de {len(link)} caracteres)')
 
 
 if __name__ == '__main__':

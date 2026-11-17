@@ -1,9 +1,9 @@
-// Convierte los SVG de docs/final/diagramas en PNG (para la PPT). Uso: node tools/diagramas/render_png.js
+// Convierte los SVG de docs/final/diagramas en PNG (para la PPT). Uso: node tools/diagramas/render_png.js [en]
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 (async () => {
-  const dir = path.join(__dirname, '..', '..', 'docs', 'final', 'diagramas');
+  const dir = path.join(__dirname, '..', '..', 'docs', 'final', 'diagramas', ...(process.argv[2] === 'en' ? ['en'] : []));
   const browser = await chromium.launch();
   for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.svg'))) {
     const svg = fs.readFileSync(path.join(dir, file), 'utf8');

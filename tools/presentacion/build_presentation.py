@@ -1,4 +1,5 @@
-"""Builds docs/final/presentacion/POLYMER-presentation.html: a single self-contained file (team photos embedded).
+"""Builds docs/final/presentacion/POLYMER-presentation.html: a single self-contained file (team photos and the
+English diagrams of docs/final/diagramas/en embedded).
 
 Usage:  python tools/presentacion/build_presentation.py [--check]
 """
@@ -9,6 +10,12 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 TEMPLATE = ROOT / "tools" / "presentacion" / "presentation.template.html"
 OUTPUT = ROOT / "docs" / "final" / "presentacion" / "POLYMER-presentation.html"
+DIAGRAMS = ROOT / "docs" / "final" / "diagramas" / "en"
+SVGS = {
+    "__SVG_HEX__": "POLYMER-hexagonal-architecture.svg",
+    "__SVG_ER__": "POLYMER-data-model.svg",
+    "__SVG_CONT__": "POLYMER-containers.svg",
+}
 PHOTOS = ROOT / "services" / "order-api" / "src" / "main" / "resources" / "static" / "img" / "equipo"
 TOKENS = {
     "__PHOTO_RONALDO__": "ronaldo-matos.jpg",
@@ -22,6 +29,9 @@ def build() -> str:
     for token, name in TOKENS.items():
         data = base64.b64encode((PHOTOS / name).read_bytes()).decode("ascii")
         html = html.replace(token, "data:image/jpeg;base64," + data)
+    for token, name in SVGS.items():  # English diagrams from tools/diagramas (generate_diagrams.py --lang en)
+        data = base64.b64encode((DIAGRAMS / name).read_bytes()).decode("ascii")
+        html = html.replace(token, "data:image/svg+xml;base64," + data)
     return html
 
 
