@@ -195,8 +195,12 @@ El parámetro de Google lo creaste tú: bórralo con `aws ssm delete-parameter -
 ## 8. Actualizar el código
 
 1. En tu PC: `terraform apply` (sube el ZIP nuevo a S3; **no** recrea la instancia ni toca los datos).
-2. En la instancia: `sudo polymer-update` (descarga el ZIP más reciente y ejecuta `polymer.ps1 start`;
-   conserva `secrets/`, `.env` y los volúmenes).
+2. En la instancia: `sudo polymer-update` (descarga el ZIP más reciente, recarga el JSON de Google desde SSM si
+   existe y ejecuta `polymer.ps1 start`; conserva `secrets/`, `.env` y los volúmenes).
+
+**Activar Google en una instancia que ya está en marcha** (sin recrearla): crea el parámetro de §4 en TU
+región y, dentro de la instancia, sobrescribe `secrets/google-oauth.json` con su valor (`cat > archivo`, que
+conserva el montaje del secreto) y ejecuta `docker compose -f docker-compose.yml restart order-api`.
 
 Cambiar `domain`, `instance_type` o `mode` después del primer despliegue: `instance_type` se aplica
 deteniendo y cambiando el tipo; `domain` y `mode` están en el arranque inicial, así que hay que recrear la

@@ -85,7 +85,16 @@ KEY=$(aws s3api list-objects-v2 --region "$REGION" --bucket "$BUCKET" --prefix s
 echo "Actualizando POLYMER con s3://$BUCKET/$KEY"
 aws s3 cp --only-show-errors --region "$REGION" "s3://$BUCKET/$KEY" /tmp/polymer-source.zip
 unzip -q -o /tmp/polymer-source.zip -d /opt/polymer && rm -f /tmp/polymer-source.zip
-cd /opt/polymer && pwsh -NoProfile -File tools/polymer.ps1 start -Mode "$MODE" -AssumeYes -NoBrowser -WaitTimeout 600
+# JSON de Google (si existe el parámetro): se reescribe sin imprimirlo y order-api lo lee al reiniciarse.
+if aws ssm get-parameter --region "$REGION" --name "$GOOGLE_PARAMETER" --with-decryption \
+     --query Parameter.Value --output text > /tmp/google-oauth.json 2>/dev/null; then
+  install -d -m 0700 /opt/polymer/secrets
+  cat /tmp/google-oauth.json > /opt/polymer/secrets/google-oauth.json && chmod 644 /opt/polymer/secrets/google-oauth.json
+  echo "Google: JSON actualizado desde SSM ($GOOGLE_PARAMETER)."
+fi
+rm -f /tmp/google-oauth.json
+cd /opt/polymer && docker compose -f docker-compose.yml restart order-api >/dev/null 2>&1 || true
+pwsh -NoProfile -File tools/polymer.ps1 start -Mode "$MODE" -AssumeYes -NoBrowser -WaitTimeout 600
 UPDATE
 chmod 755 /usr/local/bin/polymer-update
 
