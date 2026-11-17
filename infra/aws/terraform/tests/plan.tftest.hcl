@@ -54,6 +54,13 @@ run "sslip_por_defecto" {
     condition     = aws_instance.polymer.metadata_options[0].http_tokens == "required"
     error_message = "IMDSv2 obligatorio"
   }
+  # AWS solo admite a-zA-Z0-9. _-:/()#,@[]+=&;{}!$* en las descripciones (sin apóstrofos ni tildes).
+  assert {
+    condition = alltrue([for d in [aws_security_group.web.description, aws_vpc_security_group_ingress_rule.http.description,
+      aws_vpc_security_group_ingress_rule.https.description, aws_vpc_security_group_egress_rule.all.description] :
+    can(regex("^[a-zA-Z0-9. _:/()#,@\\[\\]+=&;{}!$*-]{0,255}$", d))])
+    error_message = "Descripción de grupo de seguridad con caracteres que AWS rechaza"
+  }
   assert {
     condition     = length(aws_budgets_budget.monthly) == 0
     error_message = "Sin correo no se crea la alerta"

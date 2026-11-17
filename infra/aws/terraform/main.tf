@@ -143,7 +143,7 @@ resource "aws_security_group" "web" {
 
 resource "aws_vpc_security_group_ingress_rule" "http" {
   security_group_id = aws_security_group.web.id
-  description       = "HTTP: redireccion a HTTPS y desafio ACME de Let's Encrypt"
+  description       = "HTTP: redireccion a HTTPS y desafio ACME de Lets Encrypt"
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "tcp"
   from_port         = 80
@@ -161,7 +161,7 @@ resource "aws_vpc_security_group_ingress_rule" "https" {
 
 resource "aws_vpc_security_group_egress_rule" "all" {
   security_group_id = aws_security_group.web.id
-  description       = "Salida: paquetes, imagenes Docker, Let's Encrypt, Google, SMTP 587"
+  description       = "Salida: paquetes, imagenes Docker, Lets Encrypt, Google, SMTP 587"
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
