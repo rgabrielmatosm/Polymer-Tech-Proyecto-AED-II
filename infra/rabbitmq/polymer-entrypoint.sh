@@ -22,10 +22,19 @@ chown rabbitmq:rabbitmq /etc/rabbitmq/conf.d/20-credentials.conf
 migrate_user() {
   log() { echo "POLYMER: $*"; }
   log "esperando a que RabbitMQ arranque para revisar el usuario «$user»"
-  if ! rabbitmqctl await_startup --timeout 600 >/dev/null; then
-    log "RabbitMQ no terminó de arrancar; no se revisan los usuarios" >&2
-    return 1
-  fi
+  # await_startup falla al instante si el nodo de Erlang aún no responde: se reintenta hasta 10 minutos y
+  # solo se muestra el error del último intento.
+  tries=0
+  until err=$(rabbitmqctl await_startup --timeout 120 2>&1 >/dev/null); do
+    tries=$((tries + 1))
+    if [ "$tries" -ge 200 ]; then
+      printf '%s\n' "$err" >&2
+      log "RabbitMQ no terminó de arrancar; no se revisan los usuarios" >&2
+      return 1
+    fi
+    sleep 3
+  done
+  log "RabbitMQ arrancado (intentos de espera: $tries)"
   existing=$(rabbitmqctl -q list_users --no-table-headers | cut -f1) || return 1
   if ! printf '%s\n' "$existing" | grep -qx "$user"; then
     # La contraseña solo aparece en la lista de procesos de este contenedor aislado, durante el comando.
