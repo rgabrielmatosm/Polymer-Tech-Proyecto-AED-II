@@ -1,4 +1,4 @@
-# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 8188e4e86a98347a912a0a7cdfbf4167e2bed9d0fb4ee77a7001d11ad25a5568
+# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 0e90da18602650d89ec03eafb72f35b950240ca08cbd6be6510ef05613c7b033
 # POLYMER — entregar docker-compose.yml, generado desde este archivo.
 # Docker Compose >= 2.23.1 + BuildKit + contenedores Linux.
 # Arquitectura: las dependencias del código apuntan hacia domain/application.
@@ -41415,27 +41415,33 @@ services:
         # Migración del usuario de versiones anteriores (HexaOrders): default_user solo se aplica a un nodo NUEVO, así
         # que en un volumen existente se crea «polymer» con la MISMA contraseña del secreto (no cambia ninguna
         # credencial) y el usuario heredado se elimina solo después de comprobar que «polymer» se autentica.
-        # La contraseña viaja por la entrada estándar, nunca en la línea de comandos.
-        users() { rabbitmqctl -q list_users --no-table-headers 2>/dev/null | cut -f1; }
-        (
-          tries=0
-          until rabbitmq-diagnostics -q check_running >/dev/null 2>&1; do
-            tries=$$((tries + 1)); [ "$$tries" -gt 150 ] && exit 0; sleep 2
-          done
-          if ! users | grep -qx "$$user"; then
-            printf '%s' "$$password" | rabbitmqctl -q add_user "$$user" >/dev/null \
-              && rabbitmqctl -q set_user_tags "$$user" administrator >/dev/null \
-              && rabbitmqctl -q set_permissions -p / "$$user" '.*' '.*' '.*' >/dev/null \
-              && echo "POLYMER: usuario de RabbitMQ «$$user» creado con la contraseña de secrets/rabbitmq_password.txt"
+        # Cada paso deja una línea «POLYMER:» en el log del contenedor (también los errores).
+        migrate_user() {
+          log() { echo "POLYMER: $$*"; }
+          log "esperando a que RabbitMQ arranque para revisar el usuario «$$user»"
+          if ! rabbitmqctl await_startup --timeout 600 >/dev/null; then
+            log "RabbitMQ no terminó de arrancar; no se revisan los usuarios" >&2
+            return 1
           fi
-          if [ "$$legacy" != "$$user" ] && users | grep -qx "$$legacy"; then
-            if printf '%s' "$$password" | rabbitmqctl -q authenticate_user "$$user" >/dev/null 2>&1; then
-              rabbitmqctl -q delete_user "$$legacy" >/dev/null && echo "POLYMER: usuario heredado «$$legacy» eliminado (migrado a «$$user»)"
+          existing=$$(rabbitmqctl -q list_users --no-table-headers | cut -f1) || return 1
+          if ! printf '%s\n' "$$existing" | grep -qx "$$user"; then
+            # La contraseña solo aparece en la lista de procesos de este contenedor aislado, durante el comando.
+            rabbitmqctl -q add_user "$$user" "$$password" >/dev/null || return 1
+            rabbitmqctl -q set_user_tags "$$user" administrator >/dev/null || return 1
+            rabbitmqctl -q set_permissions -p / "$$user" '.*' '.*' '.*' >/dev/null || return 1
+            log "usuario «$$user» creado con la contraseña de secrets/rabbitmq_password.txt"
+          fi
+          if [ "$$legacy" != "$$user" ] && printf '%s\n' "$$existing" | grep -qx "$$legacy"; then
+            if rabbitmqctl -q authenticate_user "$$user" "$$password" >/dev/null; then
+              rabbitmqctl -q delete_user "$$legacy" >/dev/null || return 1
+              log "usuario heredado «$$legacy» eliminado (migrado a «$$user»)"
             else
-              echo "POLYMER: «$$user» no se pudo autenticar; se conserva el usuario heredado «$$legacy»" >&2
+              log "«$$user» no se pudo autenticar; se conserva el usuario heredado «$$legacy»" >&2
             fi
           fi
-        ) &
+          log "usuarios de RabbitMQ revisados"
+        }
+        ( migrate_user || echo "POLYMER: la revisión del usuario de RabbitMQ falló (ver el error anterior)" >&2 ) &
         
         exec docker-entrypoint.sh "$$@"
         HEXFILE_2

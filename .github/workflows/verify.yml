@@ -429,6 +429,8 @@ jobs:
           docker ps -a
           docker volume ls
           for c in $(docker ps -aq); do echo "== $(docker inspect -f '{{.Name}}' $c)"; docker logs --tail 60 $c 2>&1 | tail -60; done
+          echo "== Migración del usuario de RabbitMQ (líneas POLYMER: y errores de rabbitmqctl)"
+          docker logs polymer-rabbitmq-1 2>&1 | grep -E -B2 -A6 'POLYMER:|Error:|error:' | head -80 || true
 
   # v11 · Infraestructura AWS (Terraform). NO usa credenciales ni crea recursos: formato, validación,
   # `terraform test` con proveedor simulado, sintaxis del user-data y del Caddyfile (imagen real de Caddy).
