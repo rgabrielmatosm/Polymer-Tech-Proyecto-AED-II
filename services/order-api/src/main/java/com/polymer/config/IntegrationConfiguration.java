@@ -108,6 +108,14 @@ public class IntegrationConfiguration {
         @Bean
         EventRelayScheduler eventRelayScheduler(EventRelayUseCases relay) { return new EventRelayScheduler(relay); }
 
+        /** Instalaciones anteriores: traslada los mensajes de las colas hexaorders.* a polymer.* y las elimina. */
+        @Bean
+        com.polymer.adapter.messaging.LegacyTopologyMigration legacyTopologyMigration(
+                org.springframework.amqp.core.AmqpAdmin admin, RabbitTemplate rabbit,
+                @Value("${polymer.events.confirm-timeout-ms:5000}") long timeout) {
+            return new com.polymer.adapter.messaging.LegacyTopologyMigration(admin, rabbit, timeout);
+        }
+
         @Bean
         NotificationUseCases notifications(JdbcTemplate jdbc, JavaMailSender smtp, IntegrationTelemetry telemetry,
                                            @Value("${polymer.mail.from:Polymer <no-reply@polymer.local>}") String from,

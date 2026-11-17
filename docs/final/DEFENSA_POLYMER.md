@@ -155,7 +155,7 @@ real sería otra clase que implemente `CardGateway` y `WalletGateway`.
 | **Tabla hash con expiración (TTL)** | Redis; `adapter/out/cache/RedisCatalogCache.java` (110: `set(key, json, ttl)`) | Caché del catálogo | Lectura/escritura **O(1)** promedio |
 | **Política LRU** (*Least Recently Used*) | `infra/compose.base.yml`, Redis: `--maxmemory 48mb --maxmemory-policy allkeys-lru` | Si se llena la memoria, Redis expulsa las claves menos usadas | O(1) aproximado (muestreo) |
 | **Versionado de claves** | `RedisCatalogCache.java` (31: `polymer:catalog:version`, 94: clave `v<versión>`) | Invalidar todo el catálogo con **un solo** `INCR` en vez de borrar N claves | **O(1)** frente a O(N) |
-| **Cola FIFO** | RabbitMQ: cola `hexaorders.notifications` (`adapter/messaging/EventContract.java`) | Notificar en orden, sin bloquear la compra | Encolar/desencolar O(1) |
+| **Cola FIFO** | RabbitMQ: cola `polymer.notifications` (`adapter/messaging/EventContract.java`) | Notificar en orden, sin bloquear la compra | Encolar/desencolar O(1) |
 | **Tabla como cola con marca de agua** (*outbox*) | `adapter/out/persistence/JdbcEventOutbox.java` (35: `ORDER BY h.id LIMIT ?`) | Publicar eventos en el orden en que se guardaron | Recorrido por índice B-tree O(log n + k) |
 | **Conjunto para idempotencia** | Tabla `processed_events` (PK `event_id, consumer`); `JdbcProcessedEvents.java` (19: `ON CONFLICT DO NOTHING`) | Detectar duplicados: el mismo evento no envía dos correos | Búsqueda por PK O(log n) (B-tree) |
 | **Cola de mensajes muertos** (DLQ) | `config/IntegrationConfiguration.java` (90-98) | Apartar mensajes que no se pueden procesar | — |
@@ -372,8 +372,8 @@ sequenceDiagram
     CS-->>SC: PlacementResult (201)
     SC-->>C: número de pedido
     O->>DB: eventos pendientes (outbox, ORDER BY id)
-    O->>MQ: publicar con confirmación (exchange hexaorders.events)
-    MQ->>L: cola hexaorders.notifications
+    O->>MQ: publicar con confirmación (exchange polymer.events)
+    MQ->>L: cola polymer.notifications
     L->>DB: ¿ya procesado? (processed_events)
     L->>M: correo «Recibimos tu pedido»
 ```
@@ -511,12 +511,12 @@ perdería el evento. **Solución: patrón *Transactional Outbox*:**
 2. `adapter/in/scheduling/EventRelayScheduler.java` (línea 16) despierta **cada 2 s** y pide a `EventRelayService` los
    eventos **pendientes** (`JdbcEventOutbox`: filas de `order_status_history`, `delivery_changes` y `payments` que aún
    no están en `outbox_published`, **ordenadas por id**: cola FIFO sobre una tabla).
-3. `RabbitMqEventPublisher` los publica en el exchange `hexaorders.events` con **publisher confirms** (línea 37-39):
+3. `RabbitMqEventPublisher` los publica en el exchange `polymer.events` con **publisher confirms** (línea 37-39):
    solo se marcan como publicados cuando RabbitMQ **confirma** haberlos recibido.
-4. RabbitMQ los enruta (`order.#`, `delivery.#`, `payment.#`) a la cola durable `hexaorders.notifications`.
+4. RabbitMQ los enruta (`order.#`, `delivery.#`, `payment.#`) a la cola durable `polymer.notifications`.
 5. `BusinessEventListener` los consume → `NotificationService`, que es **idempotente**: si `processed_events` ya tiene
    ese `event_id`, no envía otro correo.
-6. Un mensaje inválido o que falla repetidamente va a la **DLQ** `hexaorders.notifications.dlq`.
+6. Un mensaje inválido o que falla repetidamente va a la **DLQ** `polymer.notifications.dlq`.
 
 **Garantía:** *al menos una vez* (at-least-once) + consumidor idempotente ⇒ en la práctica, **una vez**.
 

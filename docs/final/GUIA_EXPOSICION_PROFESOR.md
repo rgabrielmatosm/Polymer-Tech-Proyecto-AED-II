@@ -24,7 +24,7 @@ Comprueba que los 13 contenedores están en marcha y sanos y muestra las URL. Te
 | Tienda | http://localhost:8080 | cuentas `cliente`, `operador`, `logistica`, `admin`, `observador` (contraseña en `secrets\demo_password.txt`) |
 | Grafana | http://localhost:3000 | `admin` / `secrets\grafana_password.txt` |
 | Prometheus | http://localhost:9091 | — |
-| RabbitMQ | http://localhost:15672 | `hexaorders` / `secrets\rabbitmq_password.txt` |
+| RabbitMQ | http://localhost:15672 | `polymer` / `secrets\rabbitmq_password.txt` |
 | Mailpit | http://localhost:8025 | — |
 
 En VS Code, abre la carpeta del proyecto y una terminal PowerShell. **No muestres en pantalla** los
@@ -135,7 +135,7 @@ Orden recomendado (≈ 50 min): A → B → C → D → E → F → G → H → 
 
 - **Resultado esperado:** pedido → historial en PostgreSQL → `outbox_published` → `processed_events` →
   correo en Mailpit; topología durable en la API de RabbitMQ.
-- **Web:** RabbitMQ → *Queues* → `hexaorders.notifications` (gráfico de mensajes); Mailpit → el correo.
+- **Web:** RabbitMQ → *Queues* → `polymer.notifications` (gráfico de mensajes); Mailpit → el correo.
 
 ## Escenario E — PostgreSQL
 

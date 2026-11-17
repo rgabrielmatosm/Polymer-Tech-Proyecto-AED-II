@@ -609,7 +609,7 @@ function Invoke-VolumeMigration([switch]$Explicit) {
 $CredentialFiles = [ordered]@{
     db       = @{ File = 'db_password.txt';       Volume = 'postgres_data'; Label = 'PostgreSQL (usuario orders)' }
     grafana  = @{ File = 'grafana_password.txt';  Volume = 'grafana_data';  Label = 'Grafana (usuario admin)' }
-    rabbitmq = @{ File = 'rabbitmq_password.txt'; Volume = 'rabbitmq_data'; Label = 'RabbitMQ (usuario hexaorders, heredado)' }
+    rabbitmq = @{ File = 'rabbitmq_password.txt'; Volume = 'rabbitmq_data'; Label = 'RabbitMQ (usuario polymer)' }
     demo     = @{ File = 'demo_password.txt';     Volume = 'postgres_data'; Label = 'Cuentas de demostración de la tienda' }
 }
 # Caracteres seguros para todos los consumidores (rabbitmq.conf, variables, archivos): sin espacios,
@@ -753,7 +753,7 @@ function Test-GrafanaPassword([string]$Value) {
 
 function Set-RabbitPassword([string]$Current, [string]$Value) {
     # API de gestión (127.0.0.1:15672): la contraseña viaja en el cuerpo, nunca en la línea de comandos.
-    $user = 'hexaorders'   # usuario heredado guardado en el volumen de RabbitMQ (docs/MIGRACION_POLYMER.md)
+    $user = 'polymer'   # en volúmenes anteriores lo crea infra/rabbitmq/polymer-entrypoint.sh (docs/MIGRACION_POLYMER.md)
     $uri = "http://127.0.0.1:15672/api/users/$user"
     $info = Invoke-RestMethod -UseBasicParsing -Uri $uri -Headers (Get-BasicAuthHeader $user $Current) -TimeoutSec 15
     $tags = @($info.tags) -join ','
@@ -763,7 +763,7 @@ function Set-RabbitPassword([string]$Current, [string]$Value) {
 
 function Test-RabbitPassword([string]$Value) {
     try {
-        $who = Invoke-RestMethod -UseBasicParsing -Uri 'http://127.0.0.1:15672/api/whoami' -Headers (Get-BasicAuthHeader 'hexaorders' $Value) -TimeoutSec 15
+        $who = Invoke-RestMethod -UseBasicParsing -Uri 'http://127.0.0.1:15672/api/whoami' -Headers (Get-BasicAuthHeader 'polymer' $Value) -TimeoutSec 15
         return [bool]$who.name
     } catch { return $false }
 }

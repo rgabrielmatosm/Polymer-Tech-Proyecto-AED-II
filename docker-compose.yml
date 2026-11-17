@@ -1,4 +1,4 @@
-# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 06d33a34fd39442fa1edcbf45484b2807ac9b4eb630608de0a975d49ac9b2ae0
+# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 8188e4e86a98347a912a0a7cdfbf4167e2bed9d0fb4ee77a7001d11ad25a5568
 # POLYMER — entregar docker-compose.yml, generado desde este archivo.
 # Docker Compose >= 2.23.1 + BuildKit + contenedores Linux.
 # Arquitectura: las dependencias del código apuntan hacia domain/application.
@@ -1982,7 +1982,7 @@ services:
         }
         SessionSignIn.java
         RUN cd src/main/java/com/polymer/adapter/in/web/security && base64 -d GoogleSignInHandlers.java.gz.b64 | gunzip > GoogleSignInHandlers.java && rm GoogleSignInHandlers.java.gz.b64
-        COPY <<'EventContract.java' src/main/java/com/polymer/adapter/messaging/
+        COPY <<'EventContract.java' <<'LegacyTopologyMigration.java.gz.b64' src/main/java/com/polymer/adapter/messaging/
         package com.polymer.adapter.messaging;
         
         import com.fasterxml.jackson.databind.JsonNode;
@@ -2002,12 +2002,17 @@ services:
          * JSON, UTF-8, schemaVersion 1. Documented in docs/ASYNCHRONOUS_EVENTS.md.
          */
         public final class EventContract {
-            // Identificadores heredados a propósito (docs/MIGRACION_POLYMER.md): el exchange y las colas viven
-            // en el volumen de RabbitMQ con sus mensajes pendientes; renombrarlos los dejaría huérfanos.
-            public static final String EXCHANGE = "hexaorders.events";
-            public static final String DEAD_LETTER_EXCHANGE = "hexaorders.events.dlx";
-            public static final String NOTIFICATIONS_QUEUE = "hexaorders.notifications";
-            public static final String NOTIFICATIONS_DLQ = "hexaorders.notifications.dlq";
+            public static final String EXCHANGE = "polymer.events";
+            public static final String DEAD_LETTER_EXCHANGE = "polymer.events.dlx";
+            public static final String NOTIFICATIONS_QUEUE = "polymer.notifications";
+            public static final String NOTIFICATIONS_DLQ = "polymer.notifications.dlq";
+        
+            // Nombres de las versiones anteriores (HexaOrders). Solo los usa LegacyTopologyMigration: traslada sus
+            // mensajes pendientes a las colas de POLYMER y luego los borra (docs/MIGRACION_POLYMER.md).
+            public static final String LEGACY_EXCHANGE = "hexaorders.events";
+            public static final String LEGACY_DEAD_LETTER_EXCHANGE = "hexaorders.events.dlx";
+            public static final String LEGACY_NOTIFICATIONS_QUEUE = "hexaorders.notifications";
+            public static final String LEGACY_NOTIFICATIONS_DLQ = "hexaorders.notifications.dlq";
             public static final String DEAD_LETTER_ROUTING_KEY = "notifications.dead";
             public static final String CONTENT_TYPE = "application/json";
         
@@ -2048,6 +2053,38 @@ services:
             }
         }
         EventContract.java
+        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
+        LegacyTopologyMigration.java.gz.b64
+        RUN cd src/main/java/com/polymer/adapter/messaging && base64 -d LegacyTopologyMigration.java.gz.b64 | gunzip > LegacyTopologyMigration.java && rm LegacyTopologyMigration.java.gz.b64
         COPY <<'RedisCatalogCache.java.gz.b64' <<'RedisPaymentWindow.java' src/main/java/com/polymer/adapter/out/cache/
         H4sIAAAAAAAC/7VY3W7byBW+91Oc6mJBJQq9RYu9kJO0aeIs3CiWayspiqIwRuRIGofisDNDK1rD
         t32AvkEv+xz7Jn2Sfmc4pEiZVrwFKhiQxZk5v9/5zhkWIvkilpISvY4LnW3X0sQiFYXDty5dnIhk
@@ -5957,41 +5994,43 @@ services:
         t3tyOWzTOtbKozy3uJjR1UtKL4fbm6D5RcRdcZEtRtvlQ5TTreSb8uualo3xmsuycilFlB62/gVx
         ZrGqwBEAAA==
         HexagonalConfiguration.java.gz.b64
-        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
-        Xjt/AUBWratiGwAA
+        H4sIAAAAAAAC/71ZW1PjOBZ+z69QMfugUEbN1tZsTYUZCgjZHmZCgCTs7jxRiq0k6rYttyQDqS7+
+        +x5JtiMb58bObh7AkXVu37lKyWj4lS4YCkVCMhGvEiZJKNI5X5x1OjzJhNS1dzSimYb/PCUJU4ou
+        eLogV7niKXwbPLNUD7nSLGXybAe5CpcsymNDb+nGLKariVvcQb2WbCn7ItWShnorjcg1CSmwJ2MW
+        cdWnmsZi0TcrO+kSymMySXR2Cw8TlkY79LM0lY5jOptxffvN6nqfz2Kulnsx0JKHitzyUAr4wuRN
+        qtlCUs1FOmUxMxtWO9lkTCrrkZCR36JZaLW4y/VMvB5MOxKaz3loNRizkGcceKmD2dxLEQI6LLK6
+        bKDPsriQRMxLEzHrMHlUrE8V25/U1/wwYmPA7mBpo9qJdBvR/j72qBWTzxzA9fLIrexN6ePTpOWC
+        JFUMQnGQDBBVWuYJSCOfab7Yd++tWR2zBQSDZ9V2mhk36eZIr3gt9b7QZ0o0Txi5zh1k9Ve5hrSF
+        YhbmUhpWVAsQRC7tvzGbM2lCsqIRckFUJiFl55Im7EXIr4Qm3zKnkpENrw7bfZXz2Nd4O9E1C2Mq
+        6Sz2YnMHBZcs1IPXcEnTxb6WPOQsP2jvYVZMRcbD/VWStjo6UlcppyzJYqq3084YTRWZQ9UXckVo
+        mgrtIvqfNN5h3UwIiIVcC9fnchAMTxG35P3yicZ3KRQqqF16tZUd0Gr2qn0drkC5Q2n6hTL1OG4j
+        jqAaEWmamENtos1729X2gu4LlGBHaYrxXiS2AZqcsg+/wUNLJ2wj9Jq8Z+sgNUE+qd7BqPHp+Bj1
+        BTBSFn0kwUlIzJFeMvT8I+LrsqgQtrYi280DVLTXB8RsNwnQ5HZ6j1KvoKkuQcefOhc1iHEmxevK
+        eApKy1JECv2C5jRWrNvJTI8OESSjUsgryDV69L3TQfC5MCzsU1vp9hWvFnGtDiJZPHTRd3jWuUxR
+        yl7Q9r6PK6oz9OY0MRD+i4MtuUYOITyjCgwBS+c8Bqg0U1p1Laaha2kIdklGIzQHWeheKL2QbPIw
+        NGCCara4Guzqll60ZglOweuA4lHZaHynFQHLrOejowAt6TN43marobHQw3JCdbi8md9yBSPlAt5A
+        HwCXGKl+Fwb/+l+xh52/TkZ3o0EF0P/UAKPnUYuisjlt4pZ8dbsC1B4YgeW643NhNcFHf/lejfEW
+        gcLRJ1rHvb+fqrejLiq7JYK1/4r3DA4PYj7v/a3Bt1gHp1TcvcB+N3/jwnqjTkkbrNPizDJ550Nv
+        vHKp756xX9SQqXWNvGoMwdhuqSXRPbPNuygokMI2Y4QThRdSvCj0soSMWtceSKNIvKQBiiSF4QVe
+        sxRxXcgtClBdf2+iKXjbUQr7drn1FhxLcNDJuffSfBrTzc/XAqoZO0fPRaAaCJp7zrHbRUZ0VMC9
+        id1QpItzFAsasehSb+R3OmzwsbaRmZskcJlhT87Ap8whDlkFmfzOJPOJQS4k/QtInKzgLJGQlKZi
+        CvUJNySZD58jbDafVJqSBdPA+7wKUiLmE2b6vsJ/Pe0SLUbAT+Fut0W4+RiwvzsUYWrWGEcWsm7h
+        I1KY0Bd5CoJMQJkaGy6hW8EK6AkjEctseuQpNFAeU0vu8/S9AAHZpkZlj9kPJrYY/56wCBonyAJR
+        p3rrkoipUHKrHz6yISggpFlchr01D1aZWUV2cpIJlQg6f5UFR13i4hI83MheK6WWyCbRqvTRAgJC
+        LFYBysrzsSkAcJAJjCwFRwGJaBrZ3t5DIo1XLsVMYs6k+AqvTQqyLBYrFq2zbd+Wbzc3x5IPt4r1
+        2X+fdqHMVFSOG7clqReG65phPt4pwVWoaQEeboZubRIvq5nL2NorXLtFIYN/93+9HH0eBLb3BgVE
+        9YipHzwAeBoNmQbHlwLqGxoSrgeX10/DwXQ6GD/tI82eQuojHYjxzyYkyi0kDUGju+nNP276l9Ob
+        u9Hk6eFx8DjotqYVWVtwgM47eY0he8CXv7PVFm7ju8fpzejz0++DP7quQuJW+6P420esvh4+bGBb
+        HFJhcI+c4+qnVnv0xo1BWgvsAqlLXmDWxEeWmPxwtIE3lBAOoyRnH+VfMFhtFpHRVVKE9kcEFOTb
+        TID5uJ03uMRy9OK/YLufu+sCvSHFS3Jcnms8IUE9GQITG0Hhx8DDPKjAceR+Ne5sqC/vb9lc6bBL
+        LdNJeQJbz7L2a9B+HtLl016DZ+vs6fAgRQ86Mb0VNDlJVO/H09NTM4jaYaFYbxZFD+R312W4tMiO
+        qa3Xtri0rmQfrE06DN3qqtuDt1rDLV6w/bAxzLaww27fma+DabY3KTSamIbgDmBGwTmSC8lUDwov
+        VTGNKOCmEESLol9cm4eOBO3X/F2yV+rCixwjikpXHKOV3QQBl/CUVn33vd3br/GHbEHDVdnIbnkR
+        NihuX8fvYmf7ldQlPF1GoCGi5u+miO38H2PvQ3jgQv1mDO4Rd20X4PUi8v7gFKD6TQ9Sic7+rLze
+        ALC9YDKXEb17t4J+TsWJhMFudVHuiUVI43MDtjtK28uLD8q9vxv+cQtV+f7xanjTf3ocD3tLrbPe
+        p09WylIo3fvp9KdTT5q7HnqU8Z9hqoKpFkpOzww/RsZMiBj8hor1LRHUcmWPy/Nt4xcWd8YNquNv
+        ++84xa5Wowxl/Qcw7ILBQO/XwGBjdLf9EgTCGRw6JiKXoH2h5RrfCoU9Arz1N0g0a1vFu5OhUWZb
+        mTcmi/LE9tZ56/wHoJIEKFYdAAA=
         IntegrationConfiguration.java.gz.b64
         H4sIAAAAAAAC/6VZz3Ljthm/+ylgTiYlHRmaTDvTHTvZVGtrverYliLJ0/akgUhIgk0RXACUren6
         2gfoG/TY6fTUY27ZN8mT5PsAkqIkUmunPMgkiO/3/f8DOmXhA5tzEsolTWW8XnJFQ5nMxPz86Egs
@@ -8276,8 +8315,8 @@ services:
           rabbitmq:
             host: $${RABBITMQ_HOST:rabbitmq}
             port: 5672
-            # Usuario heredado: RabbitMQ lo guardó en su volumen al inicializarse (docs/MIGRACION_POLYMER.md).
-            username: $${RABBITMQ_USER:hexaorders}
+            # En volúmenes de versiones anteriores, infra/rabbitmq/polymer-entrypoint.sh crea este usuario (docs/MIGRACION_POLYMER.md).
+            username: $${RABBITMQ_USER:polymer}
             publisher-confirm-type: correlated
             publisher-returns: true
             connection-timeout: 3s
@@ -22369,6 +22408,36 @@ services:
         W05spmRjV27qrEU9dWXjC+BLldp6G77t/Qf2mP0m/BkAAA==
         LocalizedPagesTest.java.gz.b64
         RUN cd src/test/java/com/polymer/adapter/in/web/i18n && base64 -d LocalizedPagesTest.java.gz.b64 | gunzip > LocalizedPagesTest.java && rm LocalizedPagesTest.java.gz.b64
+        COPY <<'LegacyTopologyMigrationTest.java.gz.b64' src/test/java/com/polymer/adapter/messaging/
+        H4sIAAAAAAAC/7VYbXPaOBD+nl+h4ZOdo2raTudmkmunhJCWad5Lp3f3pSPsxSixJUeSSbib/qT7
+        dD+hf+xWsgyGGAK9lJkAtp9d7a6efbQkZ9ENS4BEMqO5TKcZKMpilhv8zEBrlnCRHOzs8CyXyhBt
+        mOERkSqhTGtQ5ppGUgFlOacdd4NLof2zwZiZgx+2HIyVvBOH0yYPmYxuuJG0o5IiA2FOmYnGoNBc
+        bI0/lDIFJrY1O5G2LtvZfDKKb2kFt+vgp/4zlq5am0Dt9SY4ARNQmwARxkfTTZB3YxBzKlnGKTYc
+        cpPd0ijlmDXtnF5eHKwDdMdMCEjXYnpiAqnMYS3oPZgr0DlSbo67ZhNGuaT98959BLkl5OKzwvCU
+        Xij0jWwFPXtok70uBDf4nnPbOpbVhzBCgvdYNH4EOABtFiA6tzwZKZbBnVQ3lGW3edktHfzWiTMu
+        HseXGZdmvmxdlqZDVtv/jYyv3PcBZHnKDFZr5/nuLjnliWIR//6vIDGQMdwzqWJL2F3CSCUku/vE
+        KKZTFBTcBGH/RlxlpV2bCElyDmhGkPKaXYMmU4JvPMa1pMFtAkp2n+9EKaoCOYGERdOBROcymbr1
+        7Q7Z4pG/dwi+MJEJRkhGXLCUzEpFmHt/Qywfg9lt6tyGBw2mixmTshiVg8WHa7z4opPIf3p7f3uN
+        4YpMSTb79oYIuFuFC1y+bR92m7ze29vDddxC7+akLK8/FXmuUOe/MCWQBjpoFQKVJ7qBuBU6yETy
+        uMqhIpC+KkQnYVxolGmw/e2zCkK/F/Zl+z3wTIJ7iAoDAapgsMRGX4kwnBlWL2rQQ0foO1BBhGjy
+        7C0Jls1/Ox9eQ2TehsRCaAKmEtFgLwxRGvui3LLAJxH6on/bWai9F66aMJDyAIQgRa0nhiVtUio4
+        URKlQCQfYTq7NZTxtJ68AlMo4fap5jKw15VABc7liKUa2qQ3wYi7UmDDRIae9N53un987f3e/dA5
+        e99r11YM2w/qZJ1a6aSHTPNoLlD0sOApdmUQ+rMc+nHQgol51iK/2IRCOrSIIGy7+G3xDqcGtL2x
+        11wmR4fbAgpElalTSgncc23jq1cAiUY8pDQg+zWcI4djql310j6fBx44PO6eJcCVq6SrXA2xtIvv
+        rA7M+TpCTo/7SE+kxAemz6QZ46oDWTYJLNB0PnIEsw6jWQUMKdd/gpKBX2+lBddHUniDgSqgblCe
+        kUHVke5stcgNuuKBE9/dMx8xpGDAFTCYzRh2A+ezzfLV2tJlcgL6AkSMbk5L1ugv3Iy7pXhrbHhx
+        5Na0Xxc1COtq7CCiyewErRXas6aR6Wfng/5xv9sZ9M/PPn29/Nz73FvRE4vIo5PLB/2waLaB5wcu
+        a1V3PPXKQYe2v7Cdt8jBtfcqbfPUrnTmRZu03DFKIwXIvriFN1gLd69CvMQbOZtadaP+NC1RQ4sS
+        RZo+Rei2qFXgTXG+wgWFNHzEI1aO7TEwF0ZUC2OLBuvdFiwdyOBV3czzvVLtMoOLYphyPQ7gdimR
+        SipxfXy2VMbyZpmRa4XAw1irpnkNzfZjiz/coZUBDH80gJb3+RiTVy0cbbVwBweXFxUnNsC+3AL7
+        aiXWSd2iwm3ZeG0cQIsn8zzvi438ogZisskK1zPO/B8nR73O0deT3mDQu2py+FjnMZz3atP2PkkZ
+        0ZAUAgf2CfxlJ/Qxi4AInOBbyydh8/HBjhlPIfZMLYXDHhT+KBnI2aHhyt4R8UeAXPfNTz07GiBP
+        r/FNUvlrk6Tft+oN53+8uwGn9tMTtUHJG1A41n7/J5ZoQutx4hXj5liq6lw+V0fcTQD2PxPujG+g
+        QfVPlTkd9vc9H0I6Ztrvks0ap3s7SCxH8ZhAn+HsYrNe2ybepDbFzNRglkDjyPJT5qCNRrpjm896
+        6tsN0Z+F4Sly/AzuXCw9O/Hq8mfXqZxgTB0xddPowhC6Jb8bI99+c7dpkieZYbct87ed/wCpwh9J
+        oRQAAA==
+        LegacyTopologyMigrationTest.java.gz.b64
+        RUN cd src/test/java/com/polymer/adapter/messaging && base64 -d LegacyTopologyMigrationTest.java.gz.b64 | gunzip > LegacyTopologyMigrationTest.java && rm LegacyTopologyMigrationTest.java.gz.b64
         COPY <<'CommerceServiceTest.java.gz.b64' <<'IntegrationServicesTest.java.gz.b64' <<'OperationsAndLogisticsTest.java.gz.b64' <<'OrderServiceTest.java.gz.b64' <<'PaymentsAndReceiptsTest.java.gz.b64' <<'SignInServiceTest.java.gz.b64' <<'TechStoreServicesTest.java.gz.b64' <<'TestimonialServiceTest.java.gz.b64' <<'WebPlatformServicesTest.java.gz.b64' src/test/java/com/polymer/application/
         H4sIAAAAAAAC/8VZXW7bOBB+zykEPUmAIthp0qIb7KKO46BGkziwnRboS8BKlM2EIrUklURY9DB7
         gD1FL7ZDSrIlW7IdN9018iORM0NyvplvRnKCggc0w1bAYz/hNIux8FGSUBIgRTg7PTggccKFsqSC
@@ -23512,7 +23581,7 @@ services:
       POLYMER_INTEGRATIONS: auto
       REDIS_HOST: redis
       RABBITMQ_HOST: rabbitmq
-      RABBITMQ_USER: hexaorders
+      RABBITMQ_USER: polymer
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
       # v7: correo. Por defecto Mailpit (captura local). Para enviar a Gmail u otro buzón real: POLYMER_SMTP_* en .env
       # y la contraseña de aplicación en secrets/smtp_password.txt (vacío = sin autenticación). Ver docs/final/GUIA_GOOGLE_Y_PAGOS.md.
@@ -28023,7 +28092,7 @@ services:
               "targets": [
                 {
                   "refId": "A",
-                  "expr": "sum(rabbitmq_queue_messages{queue=\"hexaorders.notifications.dlq\"}) or vector(0)",
+                  "expr": "sum(rabbitmq_queue_messages{queue=\"polymer.notifications.dlq\"}) or vector(0)",
                   "instant": true
                 }
               ],
@@ -41336,24 +41405,52 @@ services:
           exit 1
         fi
         password=$$(tr -d '\r\n' < "$$secret")
+        user="$${RABBITMQ_USER:-polymer}"
+        legacy="$${RABBITMQ_LEGACY_USER:-hexaorders}"
         umask 027
         mkdir -p /etc/rabbitmq/conf.d
-        printf 'default_user = %s\ndefault_pass = %s\ndefault_vhost = /\n' "$${RABBITMQ_USER:-hexaorders}" "$$password" > /etc/rabbitmq/conf.d/20-credentials.conf
+        printf 'default_user = %s\ndefault_pass = %s\ndefault_vhost = /\n' "$$user" "$$password" > /etc/rabbitmq/conf.d/20-credentials.conf
         chown rabbitmq:rabbitmq /etc/rabbitmq/conf.d/20-credentials.conf
+        
+        # Migración del usuario de versiones anteriores (HexaOrders): default_user solo se aplica a un nodo NUEVO, así
+        # que en un volumen existente se crea «polymer» con la MISMA contraseña del secreto (no cambia ninguna
+        # credencial) y el usuario heredado se elimina solo después de comprobar que «polymer» se autentica.
+        # La contraseña viaja por la entrada estándar, nunca en la línea de comandos.
+        users() { rabbitmqctl -q list_users --no-table-headers 2>/dev/null | cut -f1; }
+        (
+          tries=0
+          until rabbitmq-diagnostics -q check_running >/dev/null 2>&1; do
+            tries=$$((tries + 1)); [ "$$tries" -gt 150 ] && exit 0; sleep 2
+          done
+          if ! users | grep -qx "$$user"; then
+            printf '%s' "$$password" | rabbitmqctl -q add_user "$$user" >/dev/null \
+              && rabbitmqctl -q set_user_tags "$$user" administrator >/dev/null \
+              && rabbitmqctl -q set_permissions -p / "$$user" '.*' '.*' '.*' >/dev/null \
+              && echo "POLYMER: usuario de RabbitMQ «$$user» creado con la contraseña de secrets/rabbitmq_password.txt"
+          fi
+          if [ "$$legacy" != "$$user" ] && users | grep -qx "$$legacy"; then
+            if printf '%s' "$$password" | rabbitmqctl -q authenticate_user "$$user" >/dev/null 2>&1; then
+              rabbitmqctl -q delete_user "$$legacy" >/dev/null && echo "POLYMER: usuario heredado «$$legacy» eliminado (migrado a «$$user»)"
+            else
+              echo "POLYMER: «$$user» no se pudo autenticar; se conserva el usuario heredado «$$legacy»" >&2
+            fi
+          fi
+        ) &
+        
         exec docker-entrypoint.sh "$$@"
         HEXFILE_2
         RUN chmod 0755 /usr/local/bin/polymer-entrypoint.sh
         ENTRYPOINT ["/usr/local/bin/polymer-entrypoint.sh"]
         CMD ["rabbitmq-server"]
-        HEALTHCHECK --interval=10s --timeout=10s --start-period=40s --retries=10 CMD ["rabbitmq-diagnostics", "-q", "ping"]
+        HEALTHCHECK --interval=10s --timeout=10s --start-period=40s --retries=10 CMD rabbitmq-diagnostics -q ping && rabbitmqctl -q list_users --no-table-headers | cut -f1 | grep -qx "$${RABBITMQ_USER:-polymer}"
     hostname: rabbitmq  # nombre de nodo estable: los mensajes persisten al recrear el contenedor
     environment:
-      RABBITMQ_USER: hexaorders
+      RABBITMQ_USER: polymer
     secrets: [rabbitmq_password]
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
-      - '127.0.0.1:15672:15672'  # consola de gestión (usuario hexaorders, secrets\rabbitmq_password.txt)
+      - '127.0.0.1:15672:15672'  # consola de gestión (usuario polymer, secrets\rabbitmq_password.txt)
     networks: [edge, messaging, telemetry]
     read_only: true
     tmpfs: ['/tmp:rw,nosuid,size=32m', '/etc/rabbitmq/conf.d:rw,noexec,nosuid,size=1m']
@@ -41361,7 +41458,8 @@ services:
     mem_limit: 512m
     cpus: 0.75
     healthcheck:
-      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      # Sano solo cuando además existe el usuario polymer (en volúmenes anteriores lo crea polymer-entrypoint.sh).
+      test: [CMD-SHELL, 'rabbitmq-diagnostics -q ping && rabbitmqctl -q list_users --no-table-headers | cut -f1 | grep -qx "$${RABBITMQ_USER:-polymer}"']
       interval: 10s
       timeout: 10s
       retries: 12

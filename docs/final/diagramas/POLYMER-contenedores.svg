@@ -86,7 +86,7 @@
 <text x="850.0" y="828.1" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">QR Yape/Plin (TTL 60 s)</text>
 <text x="850.0" y="845.3" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">LRU 48 MB · privado</text>
 <text x="1160.0" y="273.8" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">rabbitmq</text>
-<text x="1160.0" y="291.0" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">exchange hexaorders.events</text>
+<text x="1160.0" y="291.0" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">exchange polymer.events</text>
 <text x="1160.0" y="308.1" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">cola notifications + DLQ</text>
 <text x="1160.0" y="325.3" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">consola :15672</text>
 <text x="850.0" y="597.4" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">db · PostgreSQL 17</text>

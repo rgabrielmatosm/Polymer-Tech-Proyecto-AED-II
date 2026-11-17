@@ -170,7 +170,7 @@ Más detalle en [`docs/HEXAGONAL_ARCHITECTURE.md`](docs/HEXAGONAL_ARCHITECTURE.m
 
 ```
 .
-├── polymer.cmd                 ← lanzador para Windows (hexaorders.cmd es un alias)
+├── polymer.cmd                 ← lanzador para Windows
 ├── docker-compose.yml          ← entregable autosuficiente (GENERADO por tools/generate_delivery.py)
 ├── services/
 │   ├── order-api/              ← Java 21 · Spring Boot

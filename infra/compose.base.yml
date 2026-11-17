@@ -102,7 +102,7 @@ services:
       POLYMER_INTEGRATIONS: auto
       REDIS_HOST: redis
       RABBITMQ_HOST: rabbitmq
-      RABBITMQ_USER: hexaorders
+      RABBITMQ_USER: polymer
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
       # v7: correo. Por defecto Mailpit (captura local). Para enviar a Gmail u otro buzón real: POLYMER_SMTP_* en .env
       # y la contraseña de aplicación en secrets/smtp_password.txt (vacío = sin autenticación). Ver docs/final/GUIA_GOOGLE_Y_PAGOS.md.
@@ -297,12 +297,12 @@ services:
       dockerfile_inline: __INLINE_RABBITMQ__
     hostname: rabbitmq  # nombre de nodo estable: los mensajes persisten al recrear el contenedor
     environment:
-      RABBITMQ_USER: hexaorders
+      RABBITMQ_USER: polymer
     secrets: [rabbitmq_password]
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
-      - '127.0.0.1:15672:15672'  # consola de gestión (usuario hexaorders, secrets\rabbitmq_password.txt)
+      - '127.0.0.1:15672:15672'  # consola de gestión (usuario polymer, secrets\rabbitmq_password.txt)
     networks: [edge, messaging, telemetry]
     read_only: true
     tmpfs: ['/tmp:rw,nosuid,size=32m', '/etc/rabbitmq/conf.d:rw,noexec,nosuid,size=1m']
@@ -310,7 +310,8 @@ services:
     mem_limit: 512m
     cpus: 0.75
     healthcheck:
-      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      # Sano solo cuando además existe el usuario polymer (en volúmenes anteriores lo crea polymer-entrypoint.sh).
+      test: [CMD-SHELL, 'rabbitmq-diagnostics -q ping && rabbitmqctl -q list_users --no-table-headers | cut -f1 | grep -qx "$${RABBITMQ_USER:-polymer}"']
       interval: 10s
       timeout: 10s
       retries: 12

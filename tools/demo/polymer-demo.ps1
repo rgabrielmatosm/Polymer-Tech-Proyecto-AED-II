@@ -261,7 +261,7 @@ function Get-RabbitAuth {
     $file = Join-Path $SecretsDir 'rabbitmq_password.txt'
     if (-not (Test-Path -LiteralPath $file)) { return $null }
     $password = ([System.IO.File]::ReadAllText($file)).Trim()
-    $bytes = [System.Text.Encoding]::UTF8.GetBytes("hexaorders:$password")
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes("polymer:$password")
     return @{ Authorization = 'Basic ' + [Convert]::ToBase64String($bytes) }
 }
 
@@ -283,7 +283,7 @@ function Invoke-Preparar {
     Show-Info "Tienda ............ $BaseUrl"
     Show-Info "Grafana ........... http://127.0.0.1:3000   (admin; contraseña en secrets\grafana_password.txt)"
     Show-Info "Prometheus ........ $PrometheusUrl"
-    Show-Info "RabbitMQ .......... $RabbitUrl   (hexaorders; secrets\rabbitmq_password.txt)"
+    Show-Info "RabbitMQ .......... $RabbitUrl   (polymer; secrets\rabbitmq_password.txt)"
     Show-Info "Mailpit ........... $MailpitUrl"
     $adapter = Get-OrderApiEnv 'POLYMER_RISK_ADAPTER'
     $ttl = Get-OrderApiEnv 'POLYMER_CACHE_CATALOG_TTL'
@@ -455,11 +455,11 @@ function Invoke-RabbitMq {
     Show-Step '5. Topología durable en RabbitMQ (API de gestión)'
     $auth = Get-RabbitAuth
     if ($auth) {
-        $queue = Invoke-RestMethod -UseBasicParsing -Uri "$RabbitUrl/api/queues/%2F/hexaorders.notifications" -Headers $auth -TimeoutSec 15
-        $dlq = Invoke-RestMethod -UseBasicParsing -Uri "$RabbitUrl/api/queues/%2F/hexaorders.notifications.dlq" -Headers $auth -TimeoutSec 15
-        $exchange = Invoke-RestMethod -UseBasicParsing -Uri "$RabbitUrl/api/exchanges/%2F/hexaorders.events" -Headers $auth -TimeoutSec 15
-        Show-Info ("Cola hexaorders.notifications: durable={0}, consumidores={1}, listos={2}, DLX={3}" -f $queue.durable, $queue.consumers, $queue.messages_ready, $queue.arguments.'x-dead-letter-exchange')
-        Show-Info ("DLQ hexaorders.notifications.dlq: durable={0}, mensajes={1}" -f $dlq.durable, $dlq.messages)
+        $queue = Invoke-RestMethod -UseBasicParsing -Uri "$RabbitUrl/api/queues/%2F/polymer.notifications" -Headers $auth -TimeoutSec 15
+        $dlq = Invoke-RestMethod -UseBasicParsing -Uri "$RabbitUrl/api/queues/%2F/polymer.notifications.dlq" -Headers $auth -TimeoutSec 15
+        $exchange = Invoke-RestMethod -UseBasicParsing -Uri "$RabbitUrl/api/exchanges/%2F/polymer.events" -Headers $auth -TimeoutSec 15
+        Show-Info ("Cola polymer.notifications: durable={0}, consumidores={1}, listos={2}, DLX={3}" -f $queue.durable, $queue.consumers, $queue.messages_ready, $queue.arguments.'x-dead-letter-exchange')
+        Show-Info ("DLQ polymer.notifications.dlq: durable={0}, mensajes={1}" -f $dlq.durable, $dlq.messages)
         Assert-Evidence ($queue.durable -and $queue.consumers -ge 1 -and $exchange.durable -and $exchange.type -eq 'topic') 'Exchange topic durable, cola durable con consumidor y DLQ configurada'
     } else { Show-Info "Sin secrets\rabbitmq_password.txt junto a ${ComposeFile}: se omite la API de gestión." }
 }

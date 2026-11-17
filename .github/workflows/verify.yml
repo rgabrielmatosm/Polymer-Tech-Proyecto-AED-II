@@ -318,6 +318,17 @@ jobs:
             "SELECT (SELECT count(*) FROM orders) || '/' || (SELECT count(*) FROM app_users) || '/' || (SELECT count(*) FROM products) || '/' || (SELECT count(*) FROM contact_messages)")
           echo "Pedido v6: $ORDER · pedidos/usuarios/productos/mensajes: $COUNTS"
           printf '%s\n%s\n' "$ORDER" "$COUNTS" > "$RUNNER_TEMP/v6-state.txt"
+          # v12: mensajes PENDIENTES en las colas heredadas (sin consumidor), para comprobar que la migración
+          # a polymer.* no los pierde: uno en la cola de notificaciones y otro en su DLQ.
+          docker compose -f "$OLD/docker-compose.yml" stop order-api
+          AUTH=$(printf 'hexaorders:%s' "$(tr -d '\r\n' < "$OLD/secrets/rabbitmq_password.txt")" | base64 -w0)
+          for target in hexaorders.notifications:ci-migracion-cola hexaorders.notifications.dlq:ci-migracion-dlq; do
+            docker compose -f "$OLD/docker-compose.yml" exec -T rabbitmq wget -q -O- \
+              --header "Authorization: Basic $AUTH" --header 'Content-Type: application/json' \
+              --post-data "{\"properties\":{\"delivery_mode\":2},\"routing_key\":\"${target%%:*}\",\"payload\":\"${target##*:}\",\"payload_encoding\":\"string\"}" \
+              http://127.0.0.1:15672/api/exchanges/%2F/amq.default/publish | grep -q '"routed":true'
+          done
+          docker compose -f "$OLD/docker-compose.yml" exec -T rabbitmq rabbitmqctl -q list_queues name messages
       - name: POLYMER en otra carpeta SIN secrets\ → polymer.ps1 start (importa secretos y migra volúmenes)
         run: |
           $new = Join-Path $env:RUNNER_TEMP 'Descargas/POLYMER'
@@ -364,6 +375,31 @@ jobs:
           test "$($C exec -T db psql -U orders -d orders -tAc "SELECT count(*) FROM products WHERE brand = 'Polymer'")" -ge 1
           python tools/platform_smoke.py --demo-password-file "$NEW/secrets/demo_password.txt"
           python tools/store_smoke.py --demo-password-file "$NEW/secrets/demo_password.txt"
+      - name: v12 · RabbitMQ migrado a polymer (usuario, exchange y colas) sin perder los mensajes pendientes de la v6
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="docker compose -f $RUNNER_TEMP/Descargas/POLYMER/docker-compose.yml"
+          for i in $(seq 1 60); do
+            Q=$($C exec -T rabbitmq rabbitmqctl -q list_queues name messages --no-table-headers)
+            DLQ=$(echo "$Q" | awk '$1 == "polymer.notifications.dlq" { print $2 }')
+            if ! echo "$Q" | grep -q '^hexaorders\.' && [ "${DLQ:-0}" -ge 2 ]; then break; fi
+            sleep 3
+          done
+          echo "$Q"
+          if echo "$Q" | grep -q '^hexaorders\.'; then echo "Quedan colas hexaorders.*" >&2; exit 1; fi
+          echo "$Q" | grep -q '^polymer\.notifications[[:space:]]'
+          # Los 2 mensajes pendientes de la v6 llegaron: el de la DLQ directamente y el de la cola (no es un
+          # evento válido) tras los reintentos del consumidor de POLYMER.
+          test "${DLQ:-0}" -ge 2
+          USERS=$($C exec -T rabbitmq rabbitmqctl -q list_users --no-table-headers | cut -f1)
+          echo "$USERS" | grep -qx polymer
+          if echo "$USERS" | grep -qx hexaorders; then echo "El usuario heredado hexaorders sigue existiendo" >&2; exit 1; fi
+          if $C exec -T rabbitmq rabbitmqctl -q list_exchanges name --no-table-headers | grep -q '^hexaorders\.'; then
+            echo "Quedan exchanges hexaorders.*" >&2; exit 1
+          fi
+          $C logs rabbitmq order-api 2>&1 | grep -E 'POLYMER: usuario|RabbitMQ: [0-9]+ mensajes trasladados' || true
+          echo "RabbitMQ: usuario polymer (misma contraseña), exchange y colas polymer.*, mensajes de la v6 conservados"
       - name: change-password para PostgreSQL, Grafana y RabbitMQ (copia, verificación y servicios sanos)
         run: |
           $new = Join-Path $env:RUNNER_TEMP 'Descargas/POLYMER'

@@ -35,9 +35,9 @@
    - Si no encuentra la carpeta, se detiene con instrucciones: nunca genera contraseñas nuevas para datos existentes.
 4. **Identificadores heredados conservados a propósito** (ligados a datos persistentes):
    - **Migraciones Flyway V1–V8 y el generador de V7:** Flyway valida su suma de comprobación.
-   - **RabbitMQ:** el usuario `hexaorders` y el exchange y las colas `hexaorders.*`, guardados en su volumen con los mensajes pendientes.
+   - **RabbitMQ (hasta la v11):** el usuario `hexaorders` y el exchange y las colas `hexaorders.*`. *Actualización v12:* renombrados a `polymer` y `polymer.*` con migración automática que conserva la contraseña y traslada los mensajes pendientes (docs/MIGRACION_POLYMER.md, sección 5).
    - **Volúmenes `hexaorders_*`:** copia de seguridad.
-   - **Alias `hexaorders.cmd`.**
+   - **Alias `hexaorders.cmd`** (eliminado en la v12; el lanzador es `polymer.cmd`).
 5. **Datos de demostración:**
    - La migración **V9** actualiza el nombre visible y el correo de las seis cuentas de demostración, solo si conservan el valor original, y el modelo del ultrabook de la marca propia.
    - No toca contraseñas, roles, pedidos ni cuentas creadas por personas.

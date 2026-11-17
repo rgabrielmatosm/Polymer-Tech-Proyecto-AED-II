@@ -121,7 +121,7 @@ def containers() -> Page:
     p.box('risk', 'risk-engine\nPython 3.12 · FastAPI\nmicroservicio hexagonal\n:8000 (/docs)', 390, 460, 240, 110, 'core')
     p.box('db', 'db · PostgreSQL 17\n25 tablas (Flyway V1…V13)\nfuente de verdad · privado', 730, 560, 240, 100, 'data')
     p.box('redis', 'redis 7\ncaché catálogo (TTL 60 s)\nQR Yape/Plin (TTL 60 s)\nLRU 48 MB · privado', 730, 760, 240, 110, 'data')
-    p.box('mq', 'rabbitmq\nexchange hexaorders.events\ncola notifications + DLQ\nconsola :15672', 1040, 240, 240, 110, 'msg')
+    p.box('mq', 'rabbitmq\nexchange polymer.events\ncola notifications + DLQ\nconsola :15672', 1040, 240, 240, 110, 'msg')
     p.box('mail', 'mailpit\nSMTP de pruebas\n:8025', 1040, 420, 240, 90, 'msg')
     p.box('gmail', 'Gmail (opcional)\nsmtp.gmail.com:587', 1040, 580, 240, 70, 'ext')
     p.box('google', 'Google OpenID Connect\n(«Continuar con Google»)', 70, 640, 240, 70, 'ext')

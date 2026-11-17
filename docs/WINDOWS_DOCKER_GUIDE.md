@@ -39,7 +39,7 @@ Ambos deben responder sin errores (Compose 2.23.1 o superior).
 Con Git:
 
 ```powershell
-git clone https://github.com/rgabrielmatosm/Hexaorders---Arquitectura-Hexagonal-Proyecto-AED-II-.git POLYMER
+git clone https://github.com/rgabrielmatosm/Polymer-Tech-Proyecto-AED-II.git POLYMER
 ```
 
 ```powershell

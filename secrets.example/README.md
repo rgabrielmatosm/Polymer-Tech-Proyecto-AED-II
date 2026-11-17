@@ -11,7 +11,7 @@ Los archivos de esta carpeta son **ejemplos**: muestran el nombre y el formato e
 | --- | --- | --- |
 | `db_password.txt` | PostgreSQL (usuario `orders`) | Al crear el volumen y en cada conexión de `order-api` |
 | `grafana_password.txt` | Grafana (usuario `admin`) | Al crear el volumen de Grafana |
-| `rabbitmq_password.txt` | RabbitMQ (usuario heredado `hexaorders`) | Al crear el volumen de RabbitMQ y en cada conexión de `order-api` |
+| `rabbitmq_password.txt` | RabbitMQ (usuario `polymer`) | Al crear el volumen de RabbitMQ y en cada conexión de `order-api` |
 | `demo_password.txt` | Las seis cuentas de demostración de la tienda | Solo la primera vez, al crear esas cuentas |
 | `google-oauth.json` *(v8, opcional, recomendado)* | «Continuar con Google»: el JSON del cliente OAuth (*Aplicación web*) que descargas de Google Cloud | En cada arranque de `order-api` (Docker secret `google_oauth`). Vacío = botón oculto. `.\polymer.cmd google` lo detecta (también una descarga `client_secret_*.json` en `secrets\`, en la carpeta del proyecto o en Descargas) y lo valida sin mostrar valores. **Nunca** en Git ni en los ZIP |
 | `google_client_id.txt` *(v7, opcional)* | «Continuar con Google» (OpenID Connect) | En cada arranque de `order-api`. Vacío = botón oculto |

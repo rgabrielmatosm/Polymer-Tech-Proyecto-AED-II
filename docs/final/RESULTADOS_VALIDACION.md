@@ -110,9 +110,9 @@ Errores que el CI encontró en la v7 y se corrigieron antes de esta ejecución:
 
 ## 2. CI con Docker real (v6, referencia)
 
-Ejecución **[43324523676](https://github.com/rgabrielmatosm/Hexaorders---Arquitectura-Hexagonal-Proyecto-AED-II-/actions/runs/43324523676)** del workflow `Verify POLYMER` sobre el commit `016f521` (rama
+Ejecución **[43324523676](https://github.com/rgabrielmatosm/Polymer-Tech-Proyecto-AED-II/actions/runs/43324523676)** del workflow `Verify POLYMER` sobre el commit `016f521` (rama
 `claude/clever-curie-1597uv`): **los 4 jobs en verde** (`compose`, `compose-basic`, `windows`,
-`migrate-from-v6`). Las ejecuciones [43321136405](https://github.com/rgabrielmatosm/Hexaorders---Arquitectura-Hexagonal-Proyecto-AED-II-/actions/runs/43321136405) y [43324404093](https://github.com/rgabrielmatosm/Hexaorders---Arquitectura-Hexagonal-Proyecto-AED-II-/actions/runs/43324404093) (commits anteriores) también terminaron en verde.
+`migrate-from-v6`). Las ejecuciones [43321136405](https://github.com/rgabrielmatosm/Polymer-Tech-Proyecto-AED-II/actions/runs/43321136405) y [43324404093](https://github.com/rgabrielmatosm/Polymer-Tech-Proyecto-AED-II/actions/runs/43324404093) (commits anteriores) también terminaron en verde.
 
 | Job | Qué ejecutó (Docker real salvo `windows`) | Resultado |
 | --- | --- | --- |

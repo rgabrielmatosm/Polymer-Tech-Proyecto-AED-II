@@ -125,4 +125,4 @@ if (-not $onWindows) {
 Write-Host "Secretos listos en $secretsDir (excluido de Git; no compartas su contenido)."
 Write-Host "Contraseña de Grafana (usuario admin): $(Join-Path $secretsDir 'grafana_password.txt')"
 Write-Host "Contraseña de las cuentas de demostración de POLYMER: $(Join-Path $secretsDir 'demo_password.txt')"
-Write-Host "Contraseña de RabbitMQ (usuario hexaorders, heredado; consola http://127.0.0.1:15672): $(Join-Path $secretsDir 'rabbitmq_password.txt')"
+Write-Host "Contraseña de RabbitMQ (usuario polymer; consola http://127.0.0.1:15672): $(Join-Path $secretsDir 'rabbitmq_password.txt')"

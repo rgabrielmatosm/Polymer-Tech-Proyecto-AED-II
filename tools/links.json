@@ -52,7 +52,7 @@
     {
       "id": "rabbitmq",
       "name": "rabbitmq",
-      "url": "http://localhost:15672/#/queues/%2F/hexaorders.notifications",
+      "url": "http://localhost:15672/#/queues/%2F/polymer.notifications",
       "check": "http://127.0.0.1:15672/",
       "mode": "full"
     },

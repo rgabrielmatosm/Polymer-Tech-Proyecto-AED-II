@@ -11,7 +11,7 @@ Las contraseñas de POLYMER son **archivos locales** en `secrets/`, junto a `doc
 | --- | --- | --- | --- |
 | PostgreSQL | Sí (scram-sha-256) | `secrets/db_password.txt` (usuario `orders`) | Solo red interna `data`: nunca publicado |
 | Grafana | Sí | `secrets/grafana_password.txt` (usuario `admin`) | `127.0.0.1:3000` |
-| RabbitMQ | Sí | `secrets/rabbitmq_password.txt` (usuario heredado `hexaorders`) | Consola en `127.0.0.1:15672`; AMQP solo interno |
+| RabbitMQ | Sí | `secrets/rabbitmq_password.txt` (usuario `polymer`) | Consola en `127.0.0.1:15672`; AMQP solo interno |
 | Tienda: cuentas de demostración | Sí (BCrypt en PostgreSQL) | `secrets/demo_password.txt`, **solo al crearlas** | `127.0.0.1:8080` |
 | Clientes de la tienda | Sí (BCrypt) | La elige cada cliente, con la política de la sección 6 | `127.0.0.1:8080` |
 | Redis | No | — | Solo red interna `cache` |

@@ -8,4 +8,4 @@ COPY polymer-entrypoint.sh /usr/local/bin/polymer-entrypoint.sh
 RUN chmod 0755 /usr/local/bin/polymer-entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/polymer-entrypoint.sh"]
 CMD ["rabbitmq-server"]
-HEALTHCHECK --interval=10s --timeout=10s --start-period=40s --retries=10 CMD ["rabbitmq-diagnostics", "-q", "ping"]
+HEALTHCHECK --interval=10s --timeout=10s --start-period=40s --retries=10 CMD rabbitmq-diagnostics -q ping && rabbitmqctl -q list_users --no-table-headers | cut -f1 | grep -qx "${RABBITMQ_USER:-polymer}"

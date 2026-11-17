@@ -168,16 +168,16 @@ def check():
        'v7: el código de 6 dígitos para confirmar el correo llegó por correo (Mailpit)')
     ok(any('recibido' in s for s in subjects) and all(short in s for s in subjects),
        f'Mailpit capturó las notificaciones del pedido {short}: {subjects}')
-    rabbit = ('hexaorders', secret('rabbitmq_password'))
-    queue = get_json(f'{RABBITMQ}/api/queues/%2F/hexaorders.notifications', auth=rabbit)
+    rabbit = ('polymer', secret('rabbitmq_password'))
+    queue = get_json(f'{RABBITMQ}/api/queues/%2F/polymer.notifications', auth=rabbit)
     ok(queue['consumers'] >= 1 and queue.get('message_stats', {}).get('ack', 0) >= 2,
-       f'RabbitMQ: la cola hexaorders.notifications tiene consumidor y {queue["message_stats"]["ack"]} mensajes confirmados')
-    dlq = get_json(f'{RABBITMQ}/api/queues/%2F/hexaorders.notifications.dlq', auth=rabbit)
+       f'RabbitMQ: la cola polymer.notifications tiene consumidor y {queue["message_stats"]["ack"]} mensajes confirmados')
+    dlq = get_json(f'{RABBITMQ}/api/queues/%2F/polymer.notifications.dlq', auth=rabbit)
     # RabbitMQ 4 añade x-queue-type a los argumentos: solo se exige que la DLQ no reenvíe a otra DLX.
     ok(dlq.get('messages', 0) == 0 and dlq.get('durable') and 'x-dead-letter-exchange' not in dlq.get('arguments', {}),
        f"La cola de mensajes fallidos (DLQ) existe, es durable y está vacía (mensajes: {dlq.get('messages')}, argumentos: {dlq.get('arguments')})")
-    exchange = get_json(f'{RABBITMQ}/api/exchanges/%2F/hexaorders.events', auth=rabbit)
-    ok(exchange['type'] == 'topic' and exchange['durable'], 'Exchange hexaorders.events (topic, durable)')
+    exchange = get_json(f'{RABBITMQ}/api/exchanges/%2F/polymer.events', auth=rabbit)
+    ok(exchange['type'] == 'topic' and exchange['durable'], 'Exchange polymer.events (topic, durable)')
     print('v7 · Boleta por correo tras un pago en línea (pago → outbox → RabbitMQ → consumidor → SMTP)')
     products = customer.call('GET', '/api/catalog/products', expect=200)[1]
     item = min((p for p in products if p['stock'] >= 2), key=lambda p: p['price'])
@@ -232,7 +232,7 @@ def check():
     ok(exported > 0, f'El collector exportó {exported:.0f} spans a Tempo (otelcol_exporter_sent_spans)')
     nginx = eventually('métricas de Nginx', lambda: sum(prom('nginx_requests_total')), timeout=60)
     ok(nginx > 0, f'Métricas del gateway Nginx vía collector: {nginx:.0f} peticiones (nginx_requests_total)')
-    ok(sum(prom('rabbitmq_queue_messages_ready{queue="hexaorders.notifications"}') or [0]) >= 0 and prom('rabbitmq_identity_info'),
+    ok(sum(prom('rabbitmq_queue_messages_ready{queue="polymer.notifications"}') or [0]) >= 0 and prom('rabbitmq_identity_info'),
        'Métricas de RabbitMQ en Prometheus (plugin rabbitmq_prometheus)')
 
     print('Loki (logs centralizados por Grafana Alloy)')

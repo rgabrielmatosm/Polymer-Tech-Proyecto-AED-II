@@ -6,9 +6,9 @@ Rutas Java relativas a `services/order-api/src/main/java/com/polymer/`.
 
 | Garantía | Implementación |
 | --- | --- |
-| **Exchange durable** | `config/IntegrationConfiguration.Messaging.eventTopology()`: `new TopicExchange("hexaorders.events", true, false)` |
-| **Colas durables** | `QueueBuilder.durable("hexaorders.notifications")` y `QueueBuilder.durable("hexaorders.notifications.dlq")` |
-| **Dead Letter Queue** | La cola de notificaciones declara `deadLetterExchange("hexaorders.events.dlx")`; la DLQ se enlaza a ese exchange |
+| **Exchange durable** | `config/IntegrationConfiguration.Messaging.eventTopology()`: `new TopicExchange("polymer.events", true, false)` |
+| **Colas durables** | `QueueBuilder.durable("polymer.notifications")` y `QueueBuilder.durable("polymer.notifications.dlq")` |
+| **Dead Letter Queue** | La cola de notificaciones declara `deadLetterExchange("polymer.events.dlx")`; la DLQ se enlaza a ese exchange |
 | **Mensajes persistentes** | `adapter/out/messaging/RabbitMqEventPublisher.publish`: `MessageDeliveryMode.PERSISTENT` |
 | **Publisher confirms** | `application.yml`: `publisher-confirm-type: correlated`; el publicador espera el `ack` (`confirm-timeout-ms`, 5 s) |
 | **Mensajes no enrutables** | `publisher-returns: true` + `template.mandatory: true`: un mensaje sin cola es un error |
@@ -19,8 +19,8 @@ Rutas Java relativas a `services/order-api/src/main/java/com/polymer/`.
 | **Consumidor idempotente** | `adapter/in/messaging/BusinessEventListener.onEvent` → `application/service/NotificationService`: descarta un `eventId` ya presente en `processed_events` |
 | **Recuperación** | Si RabbitMQ cae, `relayPending` se detiene en el primer fallo y reintenta los mismos eventos en la siguiente ejecución |
 
-> Los nombres `hexaorders.*` del exchange, las colas y el usuario de RabbitMQ se conservan a propósito:
-> están guardados en el volumen de RabbitMQ de las instalaciones existentes (`docs/MIGRACION_POLYMER.md`).
+> Desde la v12 el exchange, las colas y el usuario se llaman `polymer`. Una instalación anterior se migra sola al
+> arrancar, sin perder mensajes pendientes (`docs/MIGRACION_POLYMER.md`, sección 5).
 
 ### Garantía de entrega real
 
@@ -42,8 +42,8 @@ sequenceDiagram
     participant DB as PostgreSQL
     participant S as EventRelayScheduler (2 s)
     participant R as EventRelayService
-    participant X as RabbitMQ (hexaorders.events)
-    participant Q as hexaorders.notifications
+    participant X as RabbitMQ (polymer.events)
+    participant Q as polymer.notifications
     participant L as BusinessEventListener
     participant N as NotificationService
     participant M as Mailpit
@@ -96,7 +96,7 @@ docker compose exec db psql -U orders -d orders -c "SELECT event_id, published_a
 
 ### Interfaces
 
-- RabbitMQ: http://127.0.0.1:15672 → *Queues* → `hexaorders.notifications` (usuario `hexaorders`,
+- RabbitMQ: http://127.0.0.1:15672 → *Queues* → `polymer.notifications` (usuario `polymer`,
   contraseña en `secrets\rabbitmq_password.txt`). Gráfico de mensajes publicados y confirmados.
 - Mailpit: http://127.0.0.1:8025 → el correo del pedido.
 - Grafana: **POLYMER — Platform Integrations** → «Eventos pendientes en el outbox», «Eventos publicados y
