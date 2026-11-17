@@ -308,6 +308,14 @@ jobs:
           git show 6cc87c0:tools/init-env.ps1 > "$RUNNER_TEMP/init-env-v6.ps1"
           # Sin variables de entorno: contraseñas aleatorias, distintas de las que generaría POLYMER.
           pwsh -NoProfile -File "$RUNNER_TEMP/init-env-v6.ps1" -Root "$OLD"
+          # La v6 se construye tal cual era (sin los reintentos que POLYMER añadió en su Dockerfile): si Maven
+          # Central responde 429 a los runners compartidos, se reintenta la compilación hasta 4 veces.
+          for i in 1 2 3 4; do
+            if docker compose -f "$OLD/docker-compose.yml" --profile full build; then break; fi
+            if [ "$i" -eq 4 ]; then echo "La v6 no se pudo construir tras 4 intentos" >&2; exit 1; fi
+            echo "Compilación de la v6 fallida (intento $i de 4; p. ej. 429 de Maven Central): reintento en $((i * 30)) s"
+            sleep $((i * 30))
+          done
           docker compose -f "$OLD/docker-compose.yml" --profile full up -d --wait --wait-timeout 420
           test "$(docker compose -f "$OLD/docker-compose.yml" --profile full ps -q | wc -l)" -eq 13
           ORDER=$(curl -sf -X POST http://127.0.0.1:8080/api/orders -H 'Content-Type: application/json' \
