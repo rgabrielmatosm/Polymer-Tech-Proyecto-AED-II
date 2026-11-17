@@ -12,6 +12,14 @@ output "domain" {
   value = local.domain
 }
 
+output "dns_records" {
+  description = "Registros DNS que debes crear en tu proveedor de dominio ANTES de que Caddy pida el certificado."
+  value = var.domain == "" ? "Ninguno: se usa sslip.io" : join("  |  ", compact([
+    "A  ${var.domain}  ->  ${aws_eip.polymer.public_ip}",
+    local.www_domain != "" ? "A  ${local.www_domain}  ->  ${aws_eip.polymer.public_ip}" : "",
+  ]))
+}
+
 output "instance_id" {
   value = aws_instance.polymer.id
 }

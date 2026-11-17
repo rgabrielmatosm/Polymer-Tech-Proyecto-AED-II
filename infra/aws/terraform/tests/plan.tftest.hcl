@@ -31,6 +31,10 @@ run "sslip_por_defecto" {
     error_message = "Sin dominio debe usarse <ip>.sslip.io por HTTPS"
   }
   assert {
+    condition     = !strcontains(aws_instance.polymer.user_data, "redir ")
+    error_message = "Sin dominio propio no hay redirección www"
+  }
+  assert {
     condition     = output.google_redirect_uri == "https://203-0-113-10.sslip.io/login/oauth2/code/google"
     error_message = "URI de retorno de Google incorrecta"
   }
@@ -82,6 +86,14 @@ run "dominio_propio_basic" {
   assert {
     condition     = output.url == "https://tienda.midominio.com"
     error_message = "Debe usar el dominio indicado"
+  }
+  assert {
+    condition     = strcontains(aws_instance.polymer.user_data, "www.tienda.midominio.com {") && strcontains(aws_instance.polymer.user_data, "redir https://tienda.midominio.com{uri} permanent")
+    error_message = "www.<dominio> debe redirigir al dominio principal"
+  }
+  assert {
+    condition     = output.dns_records == "A  tienda.midominio.com  ->  203.0.113.10  |  A  www.tienda.midominio.com  ->  203.0.113.10"
+    error_message = "Los registros DNS a crear deben incluir el dominio y www"
   }
   assert {
     condition     = strcontains(aws_instance.polymer.user_data, "-Mode basic") && strcontains(aws_instance.polymer.user_data, "email avisos@midominio.com")

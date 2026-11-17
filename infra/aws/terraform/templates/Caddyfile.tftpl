@@ -21,3 +21,10 @@ ${domain} {
 		respond "POLYMER se está iniciando. Vuelve a cargar en unos minutos." 503
 	}
 }
+%{ if www_domain != "" ~}
+
+# www.<dominio> → <dominio> (certificado propio, redirección permanente).
+${www_domain} {
+	redir https://${domain}{uri} permanent
+}
+%{ endif ~}

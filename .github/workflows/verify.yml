@@ -425,7 +425,7 @@ jobs:
       - name: user-data (bash -n) y Caddyfile (caddy validate con caddy:2.10)
         run: |
           render() { echo "$1" | terraform console | sed '1d;$d'; }
-          caddy='templatefile("templates/Caddyfile.tftpl", {domain="203-0-113-10.sslip.io", letsencrypt_email="avisos@example.com"})'
+          caddy='templatefile("templates/Caddyfile.tftpl", {domain="polymer.example.com", www_domain="www.polymer.example.com", letsencrypt_email="avisos@example.com"})'
           render "$caddy" > /tmp/Caddyfile
           render "templatefile(\"templates/user-data.sh.tftpl\", {region=\"us-east-1\", bucket=\"b\", archive_key=\"source/x.zip\", domain=\"203-0-113-10.sslip.io\", public_url=\"https://203-0-113-10.sslip.io\", mode=\"full\", swap_gb=4, letsencrypt_email=\"\", google_parameter=\"/polymer/google-oauth-json\", caddyfile=$caddy})" > /tmp/user-data.sh
           bash -n /tmp/user-data.sh

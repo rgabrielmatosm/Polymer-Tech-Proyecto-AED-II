@@ -41,6 +41,12 @@ variable "domain" {
   }
 }
 
+variable "redirect_www" {
+  description = "Con dominio propio: también sirve www.<dominio> (registro A o CNAME) y lo redirige a <dominio>."
+  type        = bool
+  default     = true
+}
+
 variable "letsencrypt_email" {
   description = "Correo opcional para los avisos de Let's Encrypt (caducidad del certificado). Vacío = sin correo."
   type        = string

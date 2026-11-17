@@ -129,10 +129,24 @@ certificado **válido** sin comprar dominio. Es un servicio de terceros comparti
 rechazara la emisión por sus límites, usa un dominio propio o un subdominio gratuito de DuckDNS (registro
 A hacia `public_ip`), pon `domain = "..."` y vuelve a crear la instancia (§8).
 
-### Con dominio propio
+### Con dominio propio (p. ej. `polymer-tech.com`)
 
-Reserva primero solo la IP: `terraform apply -target="aws_eip.polymer"` (muestra `public_ip`). Crea el registro
-**A** `tienda.tudominio.com → public_ip`, pon `domain = "tienda.tudominio.com"` y ejecuta `terraform apply`.
+Requisito: el dominio debe estar **registrado a tu nombre** (Route 53, Namecheap, Porkbun, GoDaddy…); si no
+eres su dueño, Let's Encrypt no emite el certificado. Pasos:
+
+1. `domain = "polymer-tech.com"` en `terraform.tfvars` (`redirect_www = true` sirve además
+   `www.polymer-tech.com` y lo redirige al dominio principal).
+2. Si la instancia ya existe, la IP elástica **no cambia**: `terraform output public_ip`. Si aún no existe,
+   reserva solo la IP con `terraform apply -target="aws_eip.polymer"`.
+3. En el panel DNS de tu registrador crea los registros que muestra `terraform output dns_records`:
+   **A** `polymer-tech.com → public_ip` y **A** `www → public_ip` (TTL 300). Comprueba con
+   `Resolve-DnsName polymer-tech.com` que devuelve tu IP.
+4. `terraform apply -replace="aws_instance.polymer"` (el dominio se aplica en el primer arranque; recrear
+   borra los datos de la instancia, así que conviene hacerlo antes de usarla en serio).
+5. Google Cloud: añade `https://polymer-tech.com/login/oauth2/code/google` (output `google_redirect_uri`).
+
+Si el DNS aún no apunta a la IP cuando Caddy arranca, Caddy reintenta solo: el candado aparece en cuanto la
+propagación termina (normalmente minutos).
 
 ## 6. Administrar (sin SSH)
 
@@ -195,9 +209,9 @@ instancia (`terraform apply -replace=aws_instance.polymer`), **lo que borra su b
 | `versions.tf` | Terraform ≥ 1.6, proveedores `aws` 6.x y `archive` 2.x, etiquetas comunes |
 | `variables.tf` | Región, tipo, modo, dominio, correo de Let's Encrypt, disco, swap, parámetro de Google, presupuesto |
 | `main.tf` | AMI Ubuntu 24.04 (parámetro público de Canonical), ZIP sin secretos, S3, IAM, grupo de seguridad, IP elástica, EC2, presupuesto |
-| `outputs.tf` | URL, IP, URI de Google, comandos de Session Manager |
+| `outputs.tf` | URL, IP, registros DNS a crear, URI de Google, comandos de Session Manager |
 | `templates/user-data.sh.tftpl` | Arranque: swap, Docker, PowerShell, AWS CLI, código, `.env` público, JSON de Google, Caddy, `polymer.ps1 start`, comando `polymer-update` |
-| `templates/Caddyfile.tftpl` | HTTPS automático, HSTS, bloqueo de `/api/orders`, página «se está iniciando» |
+| `templates/Caddyfile.tftpl` | HTTPS automático, HSTS, bloqueo de `/api/orders`, página «se está iniciando», `www` → dominio |
 | `tests/plan.tftest.hcl` | `terraform test` sin cuenta: sslip.io, dominio propio, modo basic, t3 en modo `standard`, IMDSv2, presupuesto, modo inválido |
 | `terraform.tfvars.example` | Plantilla de valores (copiar como `terraform.tfvars`, excluido de Git) |
 

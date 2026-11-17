@@ -19,6 +19,7 @@ locals {
   name        = "polymer"
   repo_root   = abspath("${path.module}/../../..")
   domain      = var.domain != "" ? var.domain : "${replace(aws_eip.polymer.public_ip, ".", "-")}.sslip.io"
+  www_domain  = var.domain != "" && var.redirect_www && !startswith(var.domain, "www.") ? "www.${var.domain}" : ""
   public_url  = "https://${local.domain}"
   ssm_param   = trimprefix(var.google_oauth_parameter, "/")
   archive_key = "source/polymer-${data.archive_file.source.output_md5}.zip"
@@ -211,6 +212,7 @@ resource "aws_instance" "polymer" {
     google_parameter  = var.google_oauth_parameter
     caddyfile = templatefile("${path.module}/templates/Caddyfile.tftpl", {
       domain            = local.domain
+      www_domain        = local.www_domain
       letsencrypt_email = var.letsencrypt_email
     })
   })
