@@ -2,7 +2,9 @@
 FROM maven:3.9.11-eclipse-temurin-21 AS build
 WORKDIR /build
 COPY pom.xml ./pom.xml
-RUN mvn -B -ntp dependency:go-offline
+# Maven Central puede responder 429 (demasiadas peticiones) a los runners compartidos de CI: hasta 4 intentos.
+RUN for i in 1 2 3 4; do mvn -B -ntp dependency:go-offline && exit 0; \
+      echo "Maven Central no respondió (intento $i de 4); reintento en $((i * 20)) s"; sleep $((i * 20)); done; exit 1
 COPY src ./src
 RUN mvn -B -ntp verify
 

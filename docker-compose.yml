@@ -1,4 +1,4 @@
-# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo b5c88157d186d19d276e35cc490bcb44da045925b93d108f7ffcd12da039c442
+# AUTOGENERADO: python tools/generate_delivery.py — SHA256 cuerpo 436f55ce6e63243497629b8f51f890eba17d8807c0dc3588b309ea3f32448cf6
 # POLYMER — entregar docker-compose.yml, generado desde este archivo.
 # Docker Compose >= 2.23.1 + BuildKit + contenedores Linux.
 # Arquitectura: las dependencias del código apuntan hacia domain/application.
@@ -676,7 +676,9 @@ services:
           </build>
         </project>
         HEXFILE_0
-        RUN mvn -B -ntp dependency:go-offline
+        # Maven Central puede responder 429 (demasiadas peticiones) a los runners compartidos de CI: hasta 4 intentos.
+        RUN for i in 1 2 3 4; do mvn -B -ntp dependency:go-offline && exit 0; \
+              echo "Maven Central no respondió (intento $$i de 4); reintento en $$((i * 20)) s"; sleep $$((i * 20)); done; exit 1
         COPY <<'OrderApiApplication.java' src/main/java/com/polymer/
         package com.polymer;
         
