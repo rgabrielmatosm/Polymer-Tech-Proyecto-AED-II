@@ -408,6 +408,9 @@ jobs:
           fi
           $C logs rabbitmq order-api 2>&1 | grep -E 'POLYMER: usuario|RabbitMQ: [0-9]+ mensajes trasladados' || true
           echo "RabbitMQ: usuario polymer (misma contraseña), exchange y colas polymer.*, mensajes de la v6 conservados"
+          # Los 2 mensajes de prueba ya cumplieron su función: se retiran de la DLQ para que las comprobaciones
+          # siguientes (integration_smoke exige la DLQ vacía) partan de un estado limpio.
+          $C exec -T rabbitmq rabbitmqctl -q purge_queue polymer.notifications.dlq
       - name: change-password para PostgreSQL, Grafana y RabbitMQ (copia, verificación y servicios sanos)
         run: |
           $new = Join-Path $env:RUNNER_TEMP 'Descargas/POLYMER'
