@@ -6,6 +6,11 @@
 > secretos). El CI lo repite en el job `terraform-aws` y además valida el Caddyfile con la imagen real de
 > Caddy. **No se ha creado ningún recurso en AWS:** el `terraform apply` lo ejecutas tú cuando decidas.
 
+> **Diagrama editable (iconos oficiales de AWS):** [`diagramas/POLYMER-AWS-Terraform.drawio`](diagramas/POLYMER-AWS-Terraform.drawio):
+> 1) nube → us-east-2 → cuenta → VPC → subred → grupo de seguridad → EC2 con Caddy y los 13 contenedores, S3, IAM,
+> SSM, IP elástica, la laptop con Terraform y el túnel de Session Manager; 2) los recursos de Terraform y sus
+> dependencias; 3) el entidad-relación de PostgreSQL. Se regenera con `python tools/diagramas/generate_aws_diagram.py`.
+
 ## 1. Qué crea
 
 ```mermaid
