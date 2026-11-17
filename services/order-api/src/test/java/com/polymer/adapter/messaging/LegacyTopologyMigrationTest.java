@@ -61,13 +61,14 @@ class LegacyTopologyMigrationTest {
         queues(EventContract.LEGACY_NOTIFICATIONS_QUEUE, EventContract.LEGACY_NOTIFICATIONS_DLQ,
                EventContract.NOTIFICATIONS_QUEUE, EventContract.NOTIFICATIONS_DLQ);
         when(channel.basicGet(EventContract.LEGACY_NOTIFICATIONS_QUEUE, false))
-                .thenReturn(message(1, "order.created", "a"), message(2, "payment.confirmed", "b"), null);
+                .thenReturn(message(1, "order.created", "a"), message(2, EventContract.LEGACY_NOTIFICATIONS_QUEUE, "b"), null);
         when(channel.basicGet(EventContract.LEGACY_NOTIFICATIONS_DLQ, false)).thenReturn(message(3, "notifications.dead", "c"), null);
 
         assertThat(migration.migrate()).isEqualTo(3);
 
-        verify(channel).basicPublish(eq(EventContract.EXCHANGE), eq("order.created"), eq(false), any(), eq("a".getBytes()));
-        verify(channel).basicPublish(eq(EventContract.EXCHANGE), eq("payment.confirmed"), eq(false), any(), eq("b".getBytes()));
+        // Directo a la cola nueva, sea cual sea la clave con la que llegó (también una que el exchange no enrutaría).
+        verify(channel).basicPublish(eq(""), eq(EventContract.NOTIFICATIONS_QUEUE), eq(false), any(), eq("a".getBytes()));
+        verify(channel).basicPublish(eq(""), eq(EventContract.NOTIFICATIONS_QUEUE), eq(false), any(), eq("b".getBytes()));
         verify(channel).basicPublish(eq(""), eq(EventContract.NOTIFICATIONS_DLQ), eq(false), any(), eq("c".getBytes()));
         verify(channel).basicAck(1, false);
         verify(channel).basicAck(2, false);

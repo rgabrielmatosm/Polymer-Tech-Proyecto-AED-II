@@ -54,7 +54,9 @@ public class LegacyTopologyMigration {
         int moved = 0;
         if (exists(EventContract.LEGACY_NOTIFICATIONS_QUEUE)) {
             requireQueue(EventContract.NOTIFICATIONS_QUEUE);
-            moved += drain(EventContract.LEGACY_NOTIFICATIONS_QUEUE, EventContract.EXCHANGE, got -> got.getEnvelope().getRoutingKey());
+            // Directo a la cola nueva (exchange por defecto): no depende de la clave de enrutamiento con la que llegó
+            // el mensaje, que podría no coincidir con order.#, delivery.# ni payment.# y se descartaría en el exchange.
+            moved += drain(EventContract.LEGACY_NOTIFICATIONS_QUEUE, "", got -> EventContract.NOTIFICATIONS_QUEUE);
             admin.deleteQueue(EventContract.LEGACY_NOTIFICATIONS_QUEUE, false, true);
         }
         if (exists(EventContract.LEGACY_NOTIFICATIONS_DLQ)) {

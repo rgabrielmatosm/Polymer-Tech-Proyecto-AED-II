@@ -120,7 +120,7 @@ dentro de su volumen. Desde la v12 todo se llama POLYMER y la migración ocurre 
 | --- | --- | --- | --- |
 | Usuario | `hexaorders` | `polymer` | `infra/rabbitmq/polymer-entrypoint.sh` crea `polymer` con **la misma contraseña** de `secrets/rabbitmq_password.txt` (no cambia ninguna credencial). Borra `hexaorders` solo después de comprobar que `polymer` se autentica. El healthcheck no da a RabbitMQ por sano hasta que `polymer` existe |
 | Exchange | `hexaorders.events` (y `.dlx`) | `polymer.events` (y `.dlx`) | order-api declara los nuevos y `LegacyTopologyMigration` borra los viejos |
-| Colas | `hexaorders.notifications` (y `.dlq`) | `polymer.notifications` (y `.dlq`) | `LegacyTopologyMigration` traslada cada mensaje pendiente con confirmación del broker y solo entonces lo confirma en la cola vieja (si algo falla, vuelve a la cola vieja y se reintenta). Las colas viejas se borran cuando quedan vacías |
+| Colas | `hexaorders.notifications` (y `.dlq`) | `polymer.notifications` (y `.dlq`) | `LegacyTopologyMigration` traslada cada mensaje pendiente **directamente a la cola nueva** (sin depender de su clave de enrutamiento) con confirmación del broker y solo entonces lo confirma en la cola vieja (si algo falla, vuelve a la cola vieja y se reintenta). Las colas viejas se borran cuando quedan vacías |
 
 El job del CI `migrate-from-v6` lo comprueba desde una instalación v6 real: usuario `polymer` presente y `hexaorders`
 eliminado, colas `polymer.*` presentes y ninguna `hexaorders.*`.
