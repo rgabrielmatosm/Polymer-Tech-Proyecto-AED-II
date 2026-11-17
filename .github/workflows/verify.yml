@@ -433,6 +433,24 @@ jobs:
         run: |
           ./tools/polymer.ps1 migrate -WorkDir (Join-Path $env:RUNNER_TEMP 'Descargas/POLYMER')
           if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: reset-passwords (otro equipo SIN la carpeta secrets\ y con datos existentes) → una sola contraseña local
+        run: |
+          $new = Join-Path $env:RUNNER_TEMP 'Descargas/POLYMER'
+          # Como en un equipo nuevo: los volúmenes tienen datos, pero no hay ninguna contraseña conocida.
+          Move-Item (Join-Path $new 'secrets') (Join-Path $env:RUNNER_TEMP 'secrets-guardados')
+          ./tools/polymer.ps1 reset-passwords -Password 'Aula-Local-2026' -WorkDir $new -AssumeYes
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          foreach ($f in 'db_password.txt', 'grafana_password.txt', 'rabbitmq_password.txt', 'demo_password.txt') {
+            if ([IO.File]::ReadAllText((Join-Path $new "secrets/$f")) -cne 'Aula-Local-2026') { throw "$f no quedó con la contraseña elegida" }
+          }
+          # Las 6 cuentas de la tienda (cliente, operador, logística, admin, observador) inician sesión con ella.
+          python tools/platform_smoke.py --demo-password-file (Join-Path $new 'secrets/demo_password.txt')
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $auth = @{ Authorization = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('admin:Aula-Local-2026')) }
+          if ((Invoke-RestMethod -Uri 'http://127.0.0.1:3000/api/user' -Headers $auth).login -ne 'admin') { throw 'Grafana no acepta la contraseña' }
+          $rauth = @{ Authorization = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('polymer:Aula-Local-2026')) }
+          if ((Invoke-RestMethod -Uri 'http://127.0.0.1:15672/api/whoami' -Headers $rauth).name -ne 'polymer') { throw 'RabbitMQ no acepta la contraseña' }
+          Write-Host 'Tienda (6 cuentas), Grafana (admin), RabbitMQ (polymer) y PostgreSQL con la misma contraseña; datos intactos.'
       - name: Show diagnostics on failure
         if: failure()
         shell: bash

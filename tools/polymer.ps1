@@ -51,6 +51,12 @@
                    Cambia una contraseña existente: pide confirmación, guarda la anterior en
                    secrets\backup\, la cambia en el servicio, actualiza el archivo y comprueba que
                    todo sigue funcionando (si falla, restaura la anterior). Nunca la muestra.
+      reset-passwords -Password TuClave
+                   MODO LOCAL / CLASE: pone UNA misma contraseña en las 6 cuentas de la tienda, Grafana (admin),
+                   RabbitMQ (polymer) y PostgreSQL, también sobre datos de una instalación anterior cuyas
+                   contraseñas no conoces. No borra datos: cambia las contraseñas dentro de cada servicio,
+                   guarda las anteriores en secrets\backup\ y luego arranca. Solo para equipos propios:
+                   los puertos de POLYMER escuchan en 127.0.0.1. No lo uses en un servidor público (AWS).
       repair-db-password
                    Si secrets\db_password.txt ya no coincide con la contraseña con la que se creó el
                    volumen de PostgreSQL (order-api no arranca: "password authentication failed"),
@@ -90,7 +96,7 @@ param(
     [Parameter(Position = 0)]
     [ValidateSet('help', 'start', 'status', 'logs', 'stop', 'secrets', 'k8s-secrets', 'repair-db-password',
                  'import-secrets', 'migrate', 'change-password', 'check', 'test', 'smoke', 'verify', 'diagnose', 'cleanup',
-                 'health', 'rebuild', 'restart', 'demo', 'demo-on', 'demo-off', 'enlaces', 'google')]
+                 'health', 'rebuild', 'restart', 'demo', 'demo-on', 'demo-off', 'enlaces', 'google', 'reset-passwords')]
     [string]$Command = 'help',
 
     # v5: full = 13 contenedores (perfil "full" de Compose); basic = 6 contenedores esenciales.
@@ -127,6 +133,9 @@ param(
 
     # change-password: archivo con la nueva contraseña (automatización). Sin él se pide de forma oculta.
     [string]$NewPasswordFile,
+
+    # reset-passwords: contraseña única para todo (modo local). Sin ella se pide de forma oculta.
+    [string]$Password,
 
     # rebuild / restart: servicios de Compose (por ejemplo -Services risk-engine o -Services order-api,frontend).
     [string[]]$Services,
@@ -171,7 +180,7 @@ $WorkDir = [System.IO.Path]::GetFullPath($WorkDir)
 $ComposeFile = Join-Path $WorkDir 'docker-compose.yml'
 # Perfiles de Compose: start/verify usan el modo pedido; status, logs, stop, diagnose y cleanup
 # incluyen siempre el perfil "full" para ver o detener TODOS los contenedores del proyecto.
-$UsesMode = @('start', 'verify') -contains $Command
+$UsesMode = @('start', 'verify', 'reset-passwords') -contains $Command
 if ($UsesMode -and $Mode -eq 'basic') { $env:COMPOSE_PROFILES = '' } else { $env:COMPOSE_PROFILES = 'full' }
 $FullMode = $env:COMPOSE_PROFILES -eq 'full'
 
@@ -816,6 +825,85 @@ function Invoke-ChangePassword {
         }
     }
     Write-Host "Contraseña de $($item.Label) cambiada y comprobada. secrets\$($item.File) actualizado (no se muestra)." -ForegroundColor Green
+}
+
+# ---------------------------------------------------------------- modo local: una sola contraseña
+
+$DemoUsernames = @('admin', 'operador', 'logistica', 'logistica2', 'observador', 'cliente')
+$LocalPasswordPattern = '^[A-Za-z0-9._~!@#%^*+=:,-]{8,64}$'
+
+function Set-DemoAccountsPassword([string]$Value) {
+    # Las cuentas de demostración se crean una sola vez; aquí se vuelven a cifrar (BCrypt, como la tienda) con
+    # pgcrypto dentro de PostgreSQL. Solo esas 6 cuentas: no toca pedidos ni cuentas creadas por personas.
+    $names = ($DemoUsernames | ForEach-Object { "'$_'" }) -join ','
+    $sql = $Value + "`n\getenv pw p`nBEGIN;`nCREATE EXTENSION IF NOT EXISTS pgcrypto;`n" +
+           "UPDATE app_users SET password_hash = crypt(:'pw', gen_salt('bf', 12)) WHERE username IN ($names);`n" +
+           "DROP EXTENSION pgcrypto;`nCOMMIT;`n"
+    $code = Invoke-ComposeWithInput $sql @('exec', '-T', 'db', 'sh', '-c', $DbRepairScript)
+    if ($code -ne 0) { throw "No se pudo cambiar la contraseña de las cuentas de demostración (código $code)." }
+}
+
+function Reset-GrafanaAdminPassword([string]$Value) {
+    # Herramienta oficial de Grafana: no necesita la contraseña anterior. Los logs de la CLI van a /tmp
+    # porque el contenedor es de solo lectura; la contraseña entra por stdin.
+    $script = 'tr -d "\r" | GF_PATHS_LOGS=/tmp grafana cli --homepath /usr/share/grafana admin reset-admin-password --password-from-stdin'
+    $code = Invoke-ComposeWithInput ($Value + "`n") @('exec', '-T', 'grafana', 'sh', '-c', $script)
+    if ($code -ne 0) { throw "Grafana no aceptó el cambio de contraseña (código $code)." }
+}
+
+function Reset-RabbitPassword([string]$Value) {
+    $script = 'tr -d "\r" | { IFS= read -r p; rabbitmqctl -q change_password "${RABBITMQ_USER:-polymer}" "$p"; }'
+    $code = Invoke-ComposeWithInput ($Value + "`n") @('exec', '-T', 'rabbitmq', 'sh', '-c', $script)
+    if ($code -ne 0) { throw "RabbitMQ no aceptó el cambio de contraseña (código $code)." }
+}
+
+function Invoke-ResetPasswords {
+    $value = if ($Password) { $Password } else { Read-NewSecret 'todos los servicios (modo local)' }
+    if ($value -cnotmatch $LocalPasswordPattern) {
+        throw 'La contraseña debe tener entre 8 y 64 caracteres, sin espacios ni comillas: letras, números y . _ ~ ! @ # % ^ * + = : , -'
+    }
+    Assert-Docker
+    $volumes = @{}
+    foreach ($key in @('postgres_data', 'grafana_data', 'rabbitmq_data')) { $volumes[$key] = Test-VolumeExists "polymer_$key" }
+    Write-Host ''
+    Write-Host 'MODO LOCAL: la misma contraseña para las 6 cuentas de la tienda, Grafana (admin), RabbitMQ (polymer) y PostgreSQL.' -ForegroundColor Yellow
+    Write-Host 'Los datos (pedidos, usuarios, productos, métricas) NO se borran. Las contraseñas actuales se guardan en secrets\backup\.'
+    Write-Host 'Úsalo solo en tu equipo: los puertos de POLYMER escuchan en 127.0.0.1. No lo uses en un servidor público.'
+    if (-not (Confirm-Action '¿Continuar?')) { Write-Host 'Cancelado: no se cambió nada.'; return }
+
+    $secretsDir = Join-Path $WorkDir 'secrets'
+    if (Test-Path -LiteralPath $secretsDir) {
+        $backup = Join-Path (Join-Path $secretsDir 'backup') ("reset-" + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+        New-Item -ItemType Directory -Force -Path $backup | Out-Null
+        Get-ChildItem -LiteralPath $secretsDir -Filter '*_password.txt' -File | Copy-Item -Destination $backup
+        Write-Host "Copia de las contraseñas anteriores: $backup"
+    }
+    foreach ($key in $CredentialFiles.Keys) { Write-SecretFile $key $value }
+    Initialize-WorkDir   # crea solo los secretos opcionales que falten (Google, SMTP); no sobrescribe
+
+    Write-Step 'Detener los contenedores de POLYMER (los datos se conservan)'
+    [void](Invoke-Compose @('stop') -AllowFailure)
+    if ($volumes['postgres_data']) {
+        Write-Step 'PostgreSQL y cuentas de la tienda: aplicar la nueva contraseña sin borrar datos'
+        [void](Invoke-Compose @('up', '-d', '--wait', '--wait-timeout', "$WaitTimeout", 'db'))
+        Set-DatabasePassword $value
+        if (-not (Test-DatabasePassword $value)) { throw 'PostgreSQL no confirmó la nueva contraseña.' }
+        Set-DemoAccountsPassword $value
+    }
+    if ($volumes['grafana_data']) {
+        Write-Step 'Grafana: aplicar la nueva contraseña del usuario admin'
+        [void](Invoke-Compose @('up', '-d', '--wait', '--wait-timeout', "$WaitTimeout", 'grafana'))
+        Reset-GrafanaAdminPassword $value
+        if (-not (Test-GrafanaPassword $value)) { throw 'Grafana no confirmó la nueva contraseña.' }
+    }
+    if ($volumes['rabbitmq_data'] -and $FullMode) {
+        Write-Step 'RabbitMQ: aplicar la nueva contraseña del usuario polymer'
+        [void](Invoke-Compose @('up', '-d', '--wait', '--wait-timeout', "$WaitTimeout", 'rabbitmq'))
+        Reset-RabbitPassword $value
+        if (-not (Test-RabbitPassword $value)) { throw 'RabbitMQ no confirmó la nueva contraseña.' }
+    }
+    Write-Host 'Contraseñas aplicadas (no se muestran). Usuarios: admin, operador, logistica, logistica2, observador y cliente en la tienda; admin en Grafana; polymer en RabbitMQ.' -ForegroundColor Green
+    Invoke-Start
 }
 
 # ---------------------------------------------------------------- comandos
@@ -1507,6 +1595,7 @@ try {
         'demo-off'    { Invoke-DemoScript 'desactivar-demo' }
         'enlaces'     { Invoke-Links }
         'google'      { Invoke-GoogleSetup }
+        'reset-passwords' { Invoke-ResetPasswords }
     }
     if ($InGitHub -and $Command -ne 'verify') { Write-Host '::endgroup::' }
     exit 0

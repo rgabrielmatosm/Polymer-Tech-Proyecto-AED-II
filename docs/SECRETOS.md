@@ -123,3 +123,22 @@ Al registrarse y al cambiar la contraseña, el **servidor** aplica `PasswordPoli
 - **Hash:** BCrypt (coste 12), sin cambios.
 - **Cuentas existentes:** conservan su contraseña y su hash. La política se aplica solo a contraseñas nuevas.
 - **Contraseñas filtradas:** no se consultan servicios externos como Have I Been Pwned. La tienda funciona sin Internet y nunca envía contraseñas fuera; por eso se usa la lista local.
+
+## Modo local: una sola contraseña para todo (`reset-passwords`)
+
+Para un equipo propio (clase, exposición, otro computador sin la carpeta `secrets\` anterior):
+
+```powershell
+.\polymer.cmd reset-passwords -Password TuClave
+```
+
+- Pone **la misma contraseña** en las 6 cuentas de la tienda (`admin`, `operador`, `logistica`, `logistica2`,
+  `observador`, `cliente`), en Grafana (`admin`), en RabbitMQ (`polymer`) y en PostgreSQL.
+- Funciona **también sobre datos existentes cuyas contraseñas no conoces**: las cambia dentro de cada servicio
+  (PostgreSQL desde el propio contenedor, `grafana cli admin reset-admin-password`, `rabbitmqctl change_password`
+  y las cuentas de la tienda recifradas con BCrypt). **No borra datos.**
+- Guarda las contraseñas anteriores en `secrets\backup\reset-<fecha>\` y al terminar ejecuta `start`.
+- Redis, Loki, Tempo, OpenTelemetry, Alloy, Prometheus y Mailpit no tienen contraseña (solo escuchan en `127.0.0.1`).
+- Es una excepción a la regla de 16 caracteres distintos por servicio: úsalo **solo en tu equipo**, nunca en un
+  servidor público (AWS genera sus propias contraseñas aleatorias). El CI lo prueba en `migrate-from-v6` sin la
+  carpeta `secrets\` y con datos existentes.
