@@ -94,8 +94,9 @@ public class IntegrationConfiguration {
             Queue dlq = QueueBuilder.durable(EventContract.NOTIFICATIONS_DLQ).build();
             Binding orders = BindingBuilder.bind(notifications).to(events).with("order.#");
             Binding deliveries = BindingBuilder.bind(notifications).to(events).with("delivery.#");
+            Binding payments = BindingBuilder.bind(notifications).to(events).with("payment.#");
             Binding dead = BindingBuilder.bind(dlq).to(deadLetters).with(EventContract.DEAD_LETTER_ROUTING_KEY);
-            return new Declarables(events, deadLetters, notifications, dlq, orders, deliveries, dead);
+            return new Declarables(events, deadLetters, notifications, dlq, orders, deliveries, payments, dead);
         }
 
         @Bean
@@ -107,11 +108,21 @@ public class IntegrationConfiguration {
         @Bean
         EventRelayScheduler eventRelayScheduler(EventRelayUseCases relay) { return new EventRelayScheduler(relay); }
 
+        /** Instalaciones anteriores: traslada los mensajes de las colas hexaorders.* a polymer.* y las elimina. */
+        @Bean
+        com.polymer.adapter.messaging.LegacyTopologyMigration legacyTopologyMigration(
+                org.springframework.amqp.core.AmqpAdmin admin, RabbitTemplate rabbit,
+                @Value("${polymer.events.confirm-timeout-ms:5000}") long timeout) {
+            return new com.polymer.adapter.messaging.LegacyTopologyMigration(admin, rabbit, timeout);
+        }
+
         @Bean
         NotificationUseCases notifications(JdbcTemplate jdbc, JavaMailSender smtp, IntegrationTelemetry telemetry,
-                                           @Value("${polymer.mail.from:Polymer <no-reply@polymer.local>}") String from) {
+                                           @Value("${polymer.mail.from:Polymer <no-reply@polymer.local>}") String from,
+                                           @Value("${POLYMER_PUBLIC_URL:http://localhost:8080}") String publicUrl,
+                                           @Value("${polymer.mail.sandbox:true}") boolean sandbox) {
             return new NotificationService(new JdbcProcessedEvents(jdbc), new JdbcNotificationRecipients(jdbc),
-                    new SmtpMailSender(smtp, from), telemetry);
+                    new SmtpMailSender(smtp, from), telemetry, new com.polymer.adapter.out.persistence.JdbcReceiptSource(jdbc), publicUrl, sandbox);
         }
 
         @Bean

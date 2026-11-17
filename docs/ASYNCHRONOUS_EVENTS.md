@@ -26,7 +26,7 @@ sequenceDiagram
     R->>MQ: publish (persistente, mandatory) y espera la confirmación
     MQ-->>R: ack
     R->>DB: INSERT outbox_published(event_id)
-    MQ->>L: entrega en hexaorders.notifications
+    MQ->>L: entrega en polymer.notifications
     L->>N: handle(BusinessEvent)
     N->>DB: ¿ya procesado? (processed_events)
     N->>DB: destinatario del pedido (sin incluirlo en el evento)
@@ -47,7 +47,7 @@ Cada cambio de un pedido ya escribe una fila en `order_status_history`, y cada p
 
 ## 4. Contrato de los eventos (versión 1)
 
-Exchange `hexaorders.events` (topic, durable). Mensajes JSON UTF-8, persistentes, con `message_id = eventId` y cabecera `schemaVersion`.
+Exchange `polymer.events` (topic, durable). Mensajes JSON UTF-8, persistentes, con `message_id = eventId` y cabecera `schemaVersion`.
 
 ```json
 {
@@ -78,7 +78,7 @@ Exchange `hexaorders.events` (topic, durable). Mensajes JSON UTF-8, persistentes
 | Publicación | **Al menos una vez.** Se marca como publicado solo tras el *ack* del broker; un fallo entre medias lo vuelve a publicar. |
 | Orden | El relay publica en orden de ocurrencia y se detiene en el primer fallo, para que ningún evento se adelante. |
 | Duplicados | El consumidor es **idempotente**: `processed_events(event_id, consumer)`. |
-| Reintentos | Cuatro intentos con *back-off* exponencial (1 s → 10 s). Después, el mensaje va a `hexaorders.notifications.dlq`. |
+| Reintentos | Cuatro intentos con *back-off* exponencial (1 s → 10 s). Después, el mensaje va a `polymer.notifications.dlq`. |
 | Mensajes inválidos | Directamente a la DLQ, sin reintentos. |
 | Broker caído | Los pedidos funcionan; los eventos esperan en el outbox (`polymer_outbox_pending`) y se envían al volver. |
 | Reinicios | Colas durables, mensajes persistentes, `hostname: rabbitmq` estable y volumen `rabbitmq_data`. |

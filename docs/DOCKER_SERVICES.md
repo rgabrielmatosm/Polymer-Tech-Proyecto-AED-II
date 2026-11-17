@@ -92,7 +92,7 @@ Los 3 jobs originales sin cambios. La v5 añade `rabbitmq`, `otel-collector`, `n
 
 ## 8. rabbitmq — eventos de negocio
 
-- **Topología.** Exchange `hexaorders.events` (topic) → cola `hexaorders.notifications` → DLQ `hexaorders.notifications.dlq`.
+- **Topología.** Exchange `polymer.events` (topic) → cola `polymer.notifications` → DLQ `polymer.notifications.dlq`.
 - **Garantías.** Publicación con confirmaciones desde un outbox transaccional, consumidor idempotente y reintentos. Ver [`ASYNCHRONOUS_EVENTS.md`](ASYNCHRONOUS_EVENTS.md).
 - **Configuración.**
   - Credenciales desde `secrets\rabbitmq_password.txt`, escritas en un tmpfs al arrancar.

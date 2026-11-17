@@ -107,12 +107,23 @@ docker volume rm hexaorders_postgres_data hexaorders_prometheus_data hexaorders_
 | Identificador | Dónde | Por qué no se renombra |
 | --- | --- | --- |
 | Migraciones `V1`–`V8` (comentarios y datos con el nombre anterior) y `tools/catalog_v6_data.py` / `generate_catalog.py`, que generan V7 | `db/migration/` | Flyway guarda la suma de comprobación de cada migración aplicada; editarlas impediría arrancar sobre una base existente. V8 y V9 renombran los **datos** visibles |
-| Usuario de RabbitMQ `hexaorders` | `RABBITMQ_USER`, `polymer-entrypoint.sh` | RabbitMQ lo creó al inicializar su volumen; con otro nombre, order-api no podría conectarse |
-| Exchange `hexaorders.events` (y `.dlx`), colas `hexaorders.notifications` y `hexaorders.notifications.dlq` | `EventContract.java` | Son entidades duraderas del volumen de RabbitMQ y pueden contener mensajes pendientes; con otro nombre quedarían huérfanos |
 | Volúmenes `hexaorders_*` | Docker | Copia de seguridad de la migración (sección 4) |
-| `hexaorders.cmd` | raíz | Alias que redirige a `polymer.cmd` |
 | Métricas `hexaorders_*` anteriores a la migración | Prometheus (volumen) | Es historia guardada; las métricas nuevas se llaman `polymer_*` |
 | Nombre del repositorio de GitHub | GitHub | Se cambia desde la configuración del repositorio, no desde el código |
+
+### RabbitMQ: renombrado con migración automática (v12)
+
+Hasta la v11, RabbitMQ conservaba el usuario `hexaorders` y el exchange y las colas `hexaorders.*`, porque viven
+dentro de su volumen. Desde la v12 todo se llama POLYMER y la migración ocurre sola al arrancar, sin perder nada:
+
+| Qué | Antes | Ahora | Cómo se migra |
+| --- | --- | --- | --- |
+| Usuario | `hexaorders` | `polymer` | `infra/rabbitmq/polymer-entrypoint.sh` crea `polymer` con **la misma contraseña** de `secrets/rabbitmq_password.txt` (no cambia ninguna credencial). Borra `hexaorders` solo después de comprobar que `polymer` se autentica. El healthcheck no da a RabbitMQ por sano hasta que `polymer` existe |
+| Exchange | `hexaorders.events` (y `.dlx`) | `polymer.events` (y `.dlx`) | order-api declara los nuevos y `LegacyTopologyMigration` borra los viejos |
+| Colas | `hexaorders.notifications` (y `.dlq`) | `polymer.notifications` (y `.dlq`) | `LegacyTopologyMigration` traslada cada mensaje pendiente **directamente a la cola nueva** (sin depender de su clave de enrutamiento) con confirmación del broker y solo entonces lo confirma en la cola vieja (si algo falla, vuelve a la cola vieja y se reintenta). Las colas viejas se borran cuando quedan vacías |
+
+El job del CI `migrate-from-v6` lo comprueba desde una instalación v6 real: usuario `polymer` presente y `hexaorders`
+eliminado, colas `polymer.*` presentes y ninguna `hexaorders.*`.
 
 La guía de Windows de la versión anterior se conserva en [`historial/WINDOWS_DOCKER_GUIDE-hexaorders-v6.md`](historial/WINDOWS_DOCKER_GUIDE-hexaorders-v6.md).
 

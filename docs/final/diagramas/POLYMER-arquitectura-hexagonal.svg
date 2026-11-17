@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1080" viewBox="0 0 1700 1080" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+<rect width="1700" height="1080" fill="#FFFFFF"/>
+<polygon points="530.8,120 1169.2,120 1270,550.0 1169.2,980 530.8,980 430,550.0" fill="#EEF2FF" stroke="#4F46E5" stroke-width="2"/>
+<rect x="1330" y="120" width="340" height="860" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="40" y="220" width="330" height="640" rx="10" fill="#F0FDF4" stroke="#15803D" stroke-width="1.5"/>
+<polygon points="718.0,340 982.0,340 1000,540.0 982.0,740 718.0,740 700,540.0" fill="#ECFEFF" stroke="#0E7490" stroke-width="2"/>
+<rect x="500" y="340" width="190" height="400" rx="10" fill="#FFFFFF" stroke="#4F46E5" stroke-width="1.5"/>
+<rect x="1010" y="340" width="190" height="400" rx="10" fill="#FFFFFF" stroke="#4F46E5" stroke-width="1.5"/>
+<rect x="430" y="1000" width="1240" height="56" rx="10" fill="#F8FAFC" stroke="#475569" stroke-width="1.5"/>
+<rect x="560" y="196" width="580" height="112" rx="10" fill="#EEF2FF" stroke="#4F46E5" stroke-width="1.5"/>
+<rect x="60" y="364" width="290" height="128" rx="10" fill="#F0FDF4" stroke="#15803D" stroke-width="1.5"/>
+<rect x="560" y="770" width="580" height="54" rx="10" fill="#F8FAFC" stroke="#475569" stroke-width="1.5"/>
+<rect x="1350" y="162" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="1350" y="260" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="1350" y="358" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="1350" y="456" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="1350" y="554" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="1350" y="652" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="1350" y="750" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="1350" y="848" width="300" height="86" rx="10" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.5"/>
+<rect x="60" y="262" width="290" height="88" rx="10" fill="#F0FDF4" stroke="#15803D" stroke-width="1.5"/>
+<rect x="60" y="506" width="290" height="88" rx="10" fill="#F0FDF4" stroke="#15803D" stroke-width="1.5"/>
+<rect x="60" y="608" width="290" height="88" rx="10" fill="#F0FDF4" stroke="#15803D" stroke-width="1.5"/>
+<rect x="60" y="710" width="290" height="88" rx="10" fill="#F0FDF4" stroke="#15803D" stroke-width="1.5"/>
+<rect x="40" y="112" width="250" height="70" rx="10" fill="#FDF4FF" stroke="#A21CAF" stroke-width="1.5" stroke-dasharray="6 4"/>
+<line x1="173.8" y1="182.0" x2="193.9" y2="262.0" stroke="#334155" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="350.0" y1="428.0" x2="500.0" y2="428.0" stroke="#15803D" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="399.3" y="419.0" width="51.4" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="425.0" y="431.0" font-size="11" fill="#334155" text-anchor="middle">llama a</text>
+<line x1="350.0" y1="550.0" x2="500.0" y2="550.0" stroke="#15803D" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="399.3" y="541.0" width="51.4" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="425.0" y="553.0" font-size="11" fill="#334155" text-anchor="middle">llama a</text>
+<line x1="350.0" y1="652.0" x2="500.0" y2="652.0" stroke="#15803D" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="399.3" y="643.0" width="51.4" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="425.0" y="655.0" font-size="11" fill="#334155" text-anchor="middle">llama a</text>
+<line x1="350.0" y1="716.0" x2="500.0" y2="716.0" stroke="#15803D" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="399.3" y="707.0" width="51.4" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="425.0" y="719.0" font-size="11" fill="#334155" text-anchor="middle">llama a</text>
+<line x1="205.0" y1="350.0" x2="205.0" y2="364.0" stroke="#15803D" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="188.6" y="348.0" width="32.8" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="205.0" y="360.0" font-size="11" fill="#334155" text-anchor="middle">/api</text>
+<line x1="800.4" y1="308.0" x2="690.0" y2="432.7" stroke="#4F46E5" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<rect x="710.2" y="361.4" width="70.0" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="745.2" y="373.4" font-size="11" fill="#334155" text-anchor="middle">implementa</text>
+<line x1="850.0" y1="308.0" x2="850.0" y2="340.0" stroke="#0E7490" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="836.7" y="315.0" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="850.0" y="327.0" font-size="11" fill="#334155" text-anchor="middle">usa</text>
+<line x1="899.6" y1="308.0" x2="1010.0" y2="432.7" stroke="#4F46E5" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="941.5" y="361.4" width="26.6" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="954.8" y="373.4" font-size="11" fill="#334155" text-anchor="middle">usa</text>
+<line x1="1350.0" y1="205.0" x2="1200.0" y2="364.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<rect x="1240.0" y="275.5" width="70.0" height="16" rx="4" fill="#FFFFFF" opacity="0.92"/>
+<text x="1275.0" y="287.5" font-size="11" fill="#334155" text-anchor="middle">implementa</text>
+<line x1="1350.0" y1="303.0" x2="1200.0" y2="364.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<line x1="1350.0" y1="401.0" x2="1200.0" y2="401.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<line x1="1350.0" y1="499.0" x2="1200.0" y2="499.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<line x1="1350.0" y1="597.0" x2="1200.0" y2="597.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<line x1="1350.0" y1="695.0" x2="1200.0" y2="695.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<line x1="1350.0" y1="793.0" x2="1200.0" y2="716.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<line x1="1350.0" y1="891.0" x2="1200.0" y2="716.0" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#a)"/>
+<text x="850.0" y="554.5" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle"></text>
+<text x="1500.0" y="142.0" font-size="14" font-weight="bold" fill="#0F172A" text-anchor="middle">ADAPTADORES DE SALIDA  (adapter/out)</text>
+<text x="205.0" y="242.0" font-size="14" font-weight="bold" fill="#0F172A" text-anchor="middle">ADAPTADORES DE ENTRADA  (adapter/in)</text>
+<text x="850.0" y="464.0" font-size="11" font-weight="bold" fill="#0F172A" text-anchor="middle">DOMINIO  (domain/)</text>
+<text x="850.0" y="478.5" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle"></text>
+<text x="850.0" y="493.0" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">Order · OrderStatus (≥70 → revisión)</text>
+<text x="850.0" y="507.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">TransitionPolicy (grafo de estados)</text>
+<text x="850.0" y="522.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">CommerceOrder · CheckoutSummary</text>
+<text x="850.0" y="536.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">PaymentPolicy (TTL Yape 60 s, IGV 18 %)</text>
+<text x="850.0" y="551.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">CardDetails (Luhn) · Receipt</text>
+<text x="850.0" y="565.6" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">Delivery (choque de intervalos)</text>
+<text x="850.0" y="580.1" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">CatalogSearch · PriceTag · Category</text>
+<text x="850.0" y="594.7" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">VerificationPolicy (6 dígitos, 10 min)</text>
+<text x="850.0" y="609.2" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">BusinessHours · PeruHolidays (Pascua)</text>
+<text x="850.0" y="623.7" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">Testimonial · BusinessEvent</text>
+<text x="595.0" y="449.2" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">PUERTOS DE ENTRADA</text>
+<text x="595.0" y="465.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">(application/port/in · 17)</text>
+<text x="595.0" y="480.8" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle"></text>
+<text x="595.0" y="496.7" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CommerceUseCases</text>
+<text x="595.0" y="512.5" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">PaymentUseCases</text>
+<text x="595.0" y="528.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">SignInUseCases</text>
+<text x="595.0" y="544.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CatalogUseCases</text>
+<text x="595.0" y="560.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CartUseCases</text>
+<text x="595.0" y="575.9" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">OperationsUseCases</text>
+<text x="595.0" y="591.7" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">LogisticsUseCases</text>
+<text x="595.0" y="607.6" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">TestimonialUseCases</text>
+<text x="595.0" y="623.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">NotificationUseCases</text>
+<text x="595.0" y="639.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">…</text>
+<text x="1105.0" y="449.2" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">PUERTOS DE SALIDA</text>
+<text x="1105.0" y="465.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">(application/port/out · 34)</text>
+<text x="1105.0" y="480.8" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle"></text>
+<text x="1105.0" y="496.7" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CommerceOrderRepository</text>
+<text x="1105.0" y="512.5" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CatalogRepository</text>
+<text x="1105.0" y="528.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CatalogCache</text>
+<text x="1105.0" y="544.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">RiskAssessmentPort</text>
+<text x="1105.0" y="560.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">PaymentWindow</text>
+<text x="1105.0" y="575.9" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CardGateway · WalletGateway</text>
+<text x="1105.0" y="591.7" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">EventOutbox · EventPublisher</text>
+<text x="1105.0" y="607.6" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">MailSender</text>
+<text x="1105.0" y="623.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">BusinessTelemetry</text>
+<text x="1105.0" y="639.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">MonitoringPort …</text>
+<text x="1050.0" y="1024.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">RAÍZ DE COMPOSICIÓN  (config/)  ·  HexagonalConfiguration · IntegrationConfiguration · PlatformConfiguration · SecurityConfiguration</text>
+<text x="1050.0" y="1040.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Único lugar que conoce ambos lados: elige el adaptador (p. ej. polymer.risk.adapter = http | fixed)</text>
+<text x="850.0" y="232.4" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">CASOS DE USO  (application/service · 17)</text>
+<text x="850.0" y="248.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CommerceService · PaymentService · SignInService · CatalogService</text>
+<text x="850.0" y="264.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">CartService · OperationsService · LogisticsService · TestimonialService</text>
+<text x="850.0" y="280.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">NotificationService · EventRelayService · StoreService · …</text>
+<text x="850.0" y="43.7" font-size="22" font-weight="bold" fill="#0F172A" text-anchor="middle">POLYMER · Arquitectura hexagonal (puertos y adaptadores, Alistair Cockburn 2005)</text>
+<text x="850.0" y="73.5" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">Las dependencias del código apuntan HACIA DENTRO. El núcleo no conoce Spring, SQL, Redis, RabbitMQ ni HTTP: solo interfaces (puertos).</text>
+<text x="205.0" y="400.5" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Controladores REST (adapter/in/web)</text>
+<text x="205.0" y="416.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">ShopController · PaymentController</text>
+<text x="205.0" y="432.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">AuthController · AdminController</text>
+<text x="205.0" y="448.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">OperationsController · LogisticsController</text>
+<text x="205.0" y="463.9" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">TestimonialController · StoreController…</text>
+<text x="850.0" y="800.9" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="middle">Verificado por ArchUnit (8 reglas, HexagonalArchitectureTest): si el núcleo importa una tecnología, la imagen Docker no se construye</text>
+<text x="1500.0" y="201.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">JDBC → PostgreSQL 17</text>
+<text x="1500.0" y="217.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">persistence/Jdbc*Repository (21)</text>
+<text x="1500.0" y="291.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Redis (TTL)</text>
+<text x="1500.0" y="307.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">cache/RedisCatalogCache (60 s)</text>
+<text x="1500.0" y="323.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">cache/RedisPaymentWindow (60 s)</text>
+<text x="1500.0" y="389.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">HTTP → risk-engine (Python)</text>
+<text x="1500.0" y="405.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">http/HttpRiskAssessmentAdapter</text>
+<text x="1500.0" y="421.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">(o fixed/FixedRiskAssessmentAdapter)</text>
+<text x="1500.0" y="495.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">RabbitMQ (AMQP)</text>
+<text x="1500.0" y="511.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">messaging/RabbitMqEventPublisher</text>
+<text x="1500.0" y="593.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">SMTP → Mailpit / Gmail</text>
+<text x="1500.0" y="609.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">mail/SmtpMailSender</text>
+<text x="1500.0" y="691.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Micrometer → Prometheus</text>
+<text x="1500.0" y="707.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">metrics/Micrometer*Telemetry</text>
+<text x="1500.0" y="781.4" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Pasarelas de PRUEBA</text>
+<text x="1500.0" y="797.2" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">payment/SandboxCardGateway</text>
+<text x="1500.0" y="813.0" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">payment/SandboxWalletGateway</text>
+<text x="1500.0" y="887.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Prometheus (lectura)</text>
+<text x="1500.0" y="903.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">monitoring/PrometheusMonitoringAdapter</text>
+<text x="205.0" y="302.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">frontend · Nginx (gateway :8080)</text>
+<text x="205.0" y="318.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">infra/frontend/nginx.conf</text>
+<text x="205.0" y="546.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Google OpenID Connect</text>
+<text x="205.0" y="562.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">security/GoogleSignInHandlers</text>
+<text x="205.0" y="648.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Oyente de RabbitMQ</text>
+<text x="205.0" y="664.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">messaging/BusinessEventListener</text>
+<text x="205.0" y="750.3" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">Planificador (cada 2 s)</text>
+<text x="205.0" y="766.1" font-size="12" font-weight="normal" fill="#0F172A" text-anchor="middle">scheduling/EventRelayScheduler</text>
+<text x="165.0" y="134.4" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">Cliente · Operador · Logística</text>
+<text x="165.0" y="151.6" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">Administrador · Observador</text>
+<text x="165.0" y="168.7" font-size="13" font-weight="normal" fill="#0F172A" text-anchor="middle">(navegador, HTTP)</text>
+<text x="850.0" y="170.2" font-size="15" font-weight="bold" fill="#0F172A" text-anchor="middle">NÚCLEO  (application + domain)  ·  Java puro, sin frameworks</text>
+</svg>

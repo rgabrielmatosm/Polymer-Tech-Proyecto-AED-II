@@ -1,0 +1,13 @@
+# Copia este archivo como terraform.tfvars (excluido de Git) y ajusta los valores. NO pongas secretos aquí.
+region        = "us-east-2" # la región que permita tu cuenta o proyecto
+instance_type = "m7i-flex.large" # cuenta creada desde el 15/07/2025: elegible en el plan gratuito (consume créditos)
+mode          = "full"           # "basic" si usas c7i-flex.large (4 GiB)
+
+# Vacío = <ip>.sslip.io (HTTPS válido sin comprar dominio). Con dominio propio: registro A hacia output.public_ip.
+domain = "" # p. ej. "polymer-tech.com" (con registro A hacia public_ip); vacío = sslip.io
+redirect_www = true # con dominio propio, www.<dominio> redirige a <dominio>
+
+# Opcionales (déjalos vacíos si no quieres correos):
+letsencrypt_email  = ""
+budget_alert_email = ""
+budget_limit_usd   = 20

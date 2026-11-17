@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# POLYMER · primer arranque de la instancia (cloud-init, como root). Registro: /var/log/polymer-deploy.log
+# 1) swap  2) Docker, PowerShell y AWS CLI  3) código desde S3  4) .env público (sin secretos)
+# 5) JSON de Google desde SSM (opcional)  6) Caddy (HTTPS)  7) polymer.ps1 start (genera las contraseñas aquí)
+set -euo pipefail
+exec > >(tee -a /var/log/polymer-deploy.log) 2>&1
+echo "== POLYMER deploy $(date -Is)"
+export HOME=/root DEBIAN_FRONTEND=noninteractive
+
+APP=/opt/polymer
+EDGE=/opt/polymer-edge
+install -d -m 0755 "$APP" "$EDGE"
+cat > "$EDGE/deploy.env" <<'CONF'
+REGION=${region}
+BUCKET=${bucket}
+MODE=${mode}
+GOOGLE_PARAMETER=${google_parameter}
+CONF
+
+# 1) Swap: la compilación de Maven (tests incluidos) no debe quedarse sin memoria.
+if [[ ! -f /swapfile && ${swap_gb} -gt 0 ]]; then
+  fallocate -l ${swap_gb}G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+  echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
+# 2) Paquetes: Docker Engine + Compose (repositorio oficial), PowerShell 7 y AWS CLI v2.
+apt-get update
+apt-get install -y ca-certificates curl unzip python3 unattended-upgrades
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+chmod a+r /etc/apt/keyrings/docker.asc
+. /etc/os-release
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $VERSION_CODENAME stable" \
+  > /etc/apt/sources.list.d/docker.list
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+systemctl enable --now docker
+snap wait system seed.loaded
+command -v pwsh >/dev/null || snap install powershell --classic
+command -v aws  >/dev/null || snap install aws-cli --classic
+export PATH="/snap/bin:$PATH"
+
+# 3) Código: el ZIP más reciente subido por Terraform (sin secrets/ ni .env).
+aws s3 cp --only-show-errors --region ${region} "s3://${bucket}/${archive_key}" /tmp/polymer-source.zip
+unzip -q -o /tmp/polymer-source.zip -d "$APP"
+rm -f /tmp/polymer-source.zip
+
+# 4) Configuración pública de producción (no contiene contraseñas).
+touch "$APP/.env"
+sed -i '/^POLYMER_PUBLIC_URL=/d;/^POLYMER_GOOGLE_REDIRECT_URI=/d' "$APP/.env"
+{
+  echo "POLYMER_PUBLIC_URL=${public_url}"
+  echo "POLYMER_GOOGLE_REDIRECT_URI=${public_url}/login/oauth2/code/google"
+} >> "$APP/.env"
+
+# 5) Google (opcional): el JSON vive cifrado en SSM; se escribe sin imprimirlo dentro de secrets/ (carpeta 700).
+#    Archivo 644 como el resto de secretos (tools/init-env.ps1): el contenedor order-api (uid 10001) debe leerlo.
+install -d -m 0700 "$APP/secrets"
+if aws ssm get-parameter --region ${region} --name "${google_parameter}" --with-decryption \
+     --query Parameter.Value --output text > "$APP/secrets/google-oauth.json" 2>/dev/null; then
+  chmod 644 "$APP/secrets/google-oauth.json"
+  echo "Google: JSON cargado desde SSM (${google_parameter})."
+else
+  rm -f "$APP/secrets/google-oauth.json"
+  echo "Google: parámetro ${google_parameter} no encontrado; «Continuar con Google» quedará oculto."
+fi
+
+# 6) Borde HTTPS: Caddy obtiene y renueva el certificado de Let's Encrypt para ${domain}.
+cat > "$EDGE/Caddyfile" <<'CADDY'
+${caddyfile}
+CADDY
+docker rm -f polymer-caddy >/dev/null 2>&1 || true
+docker run -d --name polymer-caddy --restart unless-stopped --network host \
+  -v "$EDGE/Caddyfile:/etc/caddy/Caddyfile:ro" -v polymer_caddy_data:/data -v polymer_caddy_config:/config \
+  caddy:2.10
+
+# Comando de actualización: descarga el ZIP más reciente y reconstruye SIN tocar secrets/, .env ni volúmenes.
+cat > /usr/local/bin/polymer-update <<'UPDATE'
+#!/usr/bin/env bash
+set -euo pipefail
+export HOME=/root PATH="/snap/bin:$PATH"
+. /opt/polymer-edge/deploy.env
+KEY=$(aws s3api list-objects-v2 --region "$REGION" --bucket "$BUCKET" --prefix source/ \
+      --query 'sort_by(Contents,&LastModified)[-1].Key' --output text)
+echo "Actualizando POLYMER con s3://$BUCKET/$KEY"
+aws s3 cp --only-show-errors --region "$REGION" "s3://$BUCKET/$KEY" /tmp/polymer-source.zip
+unzip -q -o /tmp/polymer-source.zip -d /opt/polymer && rm -f /tmp/polymer-source.zip
+# JSON de Google (si existe el parámetro): se reescribe sin imprimirlo y order-api lo lee al reiniciarse.
+if aws ssm get-parameter --region "$REGION" --name "$GOOGLE_PARAMETER" --with-decryption \
+     --query Parameter.Value --output text > /tmp/google-oauth.json 2>/dev/null; then
+  install -d -m 0700 /opt/polymer/secrets
+  cat /tmp/google-oauth.json > /opt/polymer/secrets/google-oauth.json && chmod 644 /opt/polymer/secrets/google-oauth.json
+  echo "Google: JSON actualizado desde SSM ($GOOGLE_PARAMETER)."
+fi
+rm -f /tmp/google-oauth.json
+cd /opt/polymer && docker compose -f docker-compose.yml restart order-api >/dev/null 2>&1 || true
+pwsh -NoProfile -File tools/polymer.ps1 start -Mode "$MODE" -AssumeYes -NoBrowser -WaitTimeout 600
+UPDATE
+chmod 755 /usr/local/bin/polymer-update
+
+# 7) POLYMER: genera las contraseñas DENTRO de la instancia, compila (con tests) y espera a que todo esté sano.
+cd "$APP"
+pwsh -NoProfile -File tools/polymer.ps1 start -Mode ${mode} -AssumeYes -NoBrowser -WaitTimeout 600
+
+dpkg-reconfigure -f noninteractive unattended-upgrades || true
+echo "== POLYMER listo: ${public_url}  ($(date -Is))"

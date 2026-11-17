@@ -10,7 +10,7 @@ jobs:
   # ejecuta EXACTAMENTE el mismo script PowerShell que usas en Windows: tools/polymer.ps1.
   compose:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 55
     defaults:
       run:
         shell: pwsh
@@ -85,6 +85,23 @@ jobs:
         env:
           SCREENSHOTS_DIR: ${{ runner.temp }}/ui-screenshots
         run: node i18n-e2e.js
+      # v7: «Continuar con Google» contra un proveedor OpenID Connect de PRUEBAS (infra/ci/compose.google-mock.yml),
+      # código de 6 dígitos leído de Mailpit, «Recordarme 30 días», pagos con tarjeta/Yape (vencimiento a los 60 s),
+      # boleta y su correo, video de portada, mapa de Google Maps, horario de hoy y Google Calendar.
+      - name: v7 · Google, código por correo, pagos (tarjeta, Yape 60 s), boleta, video, mapa y horario
+        shell: bash
+        working-directory: tools/ui-e2e
+        env:
+          SCREENSHOTS_DIR: ${{ runner.temp }}/ui-screenshots
+        run: |
+          set -euo pipefail
+          base="$RUNNER_TEMP/polymer-delivery/docker-compose.yml"
+          mock="$GITHUB_WORKSPACE/infra/ci/compose.google-mock.yml"
+          docker compose -p polymer-verify -f "$base" -f "$mock" up -d --no-build --wait --wait-timeout 240 mock-oauth2 order-api
+          node v7-e2e.js
+          # Vuelta a la configuración normal (13 contenedores) para los escenarios de la exposición.
+          docker compose -p polymer-verify -f "$base" -f "$mock" rm -sf mock-oauth2
+          docker compose -p polymer-verify -f "$base" up -d --no-build --wait --wait-timeout 240 order-api
       # Exposición: los MISMOS escenarios que se ejecutan en Windows con «.\polymer.cmd demo», contra el stack
       # real. Cada uno falla si una evidencia no se cumple (claves y TTL de Redis, filas de PostgreSQL, colas
       # de RabbitMQ, correos de Mailpit, métricas, 503 sin risk-engine, adaptador sustituido…).
@@ -94,7 +111,7 @@ jobs:
         run: |
           $compose = Join-Path $env:RUNNER_TEMP 'polymer-delivery/docker-compose.yml'
           $common = @{ ComposeFile = $compose; Project = 'polymer-verify'; NoPause = $true }
-          foreach ($scenario in 'preparar', 'arquitectura', 'rabbitmq', 'postgres', 'riesgo', 'observabilidad',
+          foreach ($scenario in 'preparar', 'arquitectura', 'rabbitmq', 'postgres', 'riesgo', 'observabilidad', 'pagos',
                                 'redis-caida', 'rabbitmq-caida', 'riesgo-caida') {
             ./tools/demo/polymer-demo.ps1 -Scenario $scenario @common
           }
@@ -104,6 +121,42 @@ jobs:
           ./tools/demo/polymer-demo.ps1 -Scenario adaptador @common
           ./tools/demo/polymer-demo.ps1 -Scenario desactivar-demo @common
           ./tools/demo/polymer-demo.ps1 -Scenario preparar @common
+      # v8: enlace local de cada contenedor (los mismos que muestra Docker Desktop) y slices con su verificador.
+      - name: v8 · Enlaces por contenedor y por slice (polymer.ps1 enlaces)
+        env:
+          COMPOSE_PROJECT_NAME: polymer-verify
+        run: |
+          python tools/generate_links.py --check
+          ./tools/polymer.ps1 enlaces -WorkDir (Join-Path $env:RUNNER_TEMP 'polymer-delivery') -NoBrowser
+          # El núcleo responde sin el gateway (8081) y risk-engine abre su documentación interactiva (8000).
+          $catalog = Invoke-RestMethod -Uri 'http://127.0.0.1:8081/api/catalog/categories' -TimeoutSec 15
+          if (@($catalog).Count -lt 1) { throw 'order-api (8081) no devolvió categorías' }
+          $docs = Invoke-WebRequest -Uri 'http://127.0.0.1:8000/' -TimeoutSec 15
+          if ($docs.Content -notmatch 'swagger') { throw 'risk-engine (8000) no abrió /docs' }
+      # v8: asistente de Google sin interacción con un JSON de cliente OAuth FICTICIO (mismo formato que descarga
+      # Google Cloud): lo copia a secrets/google-oauth.json, reinicia order-api y comprueba que el botón se activa y
+      # redirige a accounts.google.com con ese ID (no inicia sesión real). El secreto no debe aparecer en los logs.
+      - name: v8 · Asistente de Google con secrets/google-oauth.json (JSON ficticio)
+        env:
+          COMPOSE_PROJECT_NAME: polymer-verify
+        run: |
+          $work = Join-Path $env:RUNNER_TEMP 'polymer-delivery'
+          $download = Join-Path $env:RUNNER_TEMP 'client_secret_ci.apps.googleusercontent.com.json'
+          $fake = 'GOCSPX-ci-only-not-a-real-secret'
+          $json = @{ web = @{ client_id = '123456789012-ciexample.apps.googleusercontent.com'; project_id = 'polymer-ci'; client_secret = $fake
+                     auth_uri = 'https://accounts.google.com/o/oauth2/auth'; token_uri = 'https://oauth2.googleapis.com/token'
+                     redirect_uris = @('http://localhost:8080/login/oauth2/code/google', 'http://127.0.0.1:8080/login/oauth2/code/google') } }
+          [System.IO.File]::WriteAllText($download, ($json | ConvertTo-Json -Depth 4))
+          $output = ./tools/polymer.ps1 google -WorkDir $work -AssumeYes -GoogleJsonFile $download 6>&1 | Out-String
+          Write-Host $output
+          if ($LASTEXITCODE -ne 0) { throw 'polymer.ps1 google falló' }
+          if ($output -match [regex]::Escape($fake)) { throw 'El asistente mostró el secreto' }
+          if (-not (Test-Path (Join-Path $work 'secrets/google-oauth.json'))) { throw 'No se creó secrets/google-oauth.json' }
+          $logs = docker compose -f (Join-Path $work 'docker-compose.yml') logs order-api 2>&1 | Out-String
+          if ($logs -match [regex]::Escape($fake)) { throw 'El secreto aparece en los logs de order-api' }
+          if ($logs -notmatch 'credenciales: secrets/google-oauth.json') { throw 'order-api no usó secrets/google-oauth.json' }
+          Remove-Item $download
+          ./tools/polymer.ps1 enlaces -WorkDir $work -NoBrowser
       - name: Upload UI screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -255,6 +308,14 @@ jobs:
           git show 6cc87c0:tools/init-env.ps1 > "$RUNNER_TEMP/init-env-v6.ps1"
           # Sin variables de entorno: contraseñas aleatorias, distintas de las que generaría POLYMER.
           pwsh -NoProfile -File "$RUNNER_TEMP/init-env-v6.ps1" -Root "$OLD"
+          # La v6 se construye tal cual era (sin los reintentos que POLYMER añadió en su Dockerfile): si Maven
+          # Central responde 429 a los runners compartidos, se reintenta la compilación hasta 4 veces.
+          for i in 1 2 3 4; do
+            if docker compose -f "$OLD/docker-compose.yml" --profile full build; then break; fi
+            if [ "$i" -eq 4 ]; then echo "La v6 no se pudo construir tras 4 intentos" >&2; exit 1; fi
+            echo "Compilación de la v6 fallida (intento $i de 4; p. ej. 429 de Maven Central): reintento en $((i * 30)) s"
+            sleep $((i * 30))
+          done
           docker compose -f "$OLD/docker-compose.yml" --profile full up -d --wait --wait-timeout 420
           test "$(docker compose -f "$OLD/docker-compose.yml" --profile full ps -q | wc -l)" -eq 13
           ORDER=$(curl -sf -X POST http://127.0.0.1:8080/api/orders -H 'Content-Type: application/json' \
@@ -265,6 +326,17 @@ jobs:
             "SELECT (SELECT count(*) FROM orders) || '/' || (SELECT count(*) FROM app_users) || '/' || (SELECT count(*) FROM products) || '/' || (SELECT count(*) FROM contact_messages)")
           echo "Pedido v6: $ORDER · pedidos/usuarios/productos/mensajes: $COUNTS"
           printf '%s\n%s\n' "$ORDER" "$COUNTS" > "$RUNNER_TEMP/v6-state.txt"
+          # v12: mensajes PENDIENTES en las colas heredadas (sin consumidor), para comprobar que la migración
+          # a polymer.* no los pierde: uno en la cola de notificaciones y otro en su DLQ.
+          docker compose -f "$OLD/docker-compose.yml" stop order-api
+          AUTH=$(printf 'hexaorders:%s' "$(tr -d '\r\n' < "$OLD/secrets/rabbitmq_password.txt")" | base64 -w0)
+          for target in hexaorders.notifications:ci-migracion-cola hexaorders.notifications.dlq:ci-migracion-dlq; do
+            docker compose -f "$OLD/docker-compose.yml" exec -T rabbitmq wget -q -O- \
+              --header "Authorization: Basic $AUTH" --header 'Content-Type: application/json' \
+              --post-data "{\"properties\":{\"delivery_mode\":2},\"routing_key\":\"${target%%:*}\",\"payload\":\"${target##*:}\",\"payload_encoding\":\"string\"}" \
+              http://127.0.0.1:15672/api/exchanges/%2F/amq.default/publish | grep -q '"routed":true'
+          done
+          docker compose -f "$OLD/docker-compose.yml" exec -T rabbitmq rabbitmqctl -q list_queues name messages
       - name: POLYMER en otra carpeta SIN secrets\ → polymer.ps1 start (importa secretos y migra volúmenes)
         run: |
           $new = Join-Path $env:RUNNER_TEMP 'Descargas/POLYMER'
@@ -299,13 +371,46 @@ jobs:
           test "$BEFORE" = "$AFTER"
           curl -sf "http://127.0.0.1:8080/api/orders/$ORDER" | python -c 'import json,sys; o=json.load(sys.stdin); assert o["customerId"]=="cliente-v6" and float(o["amount"])==321.5, o; print("Pedido de la v6 intacto:", o["id"])'
           test "$($C exec -T db psql -U orders -d orders -tAc "SELECT count(*) FROM contact_messages WHERE name = 'Migración CI'")" -eq 1
-          test "$($C exec -T db psql -U orders -d orders -tAc "SELECT max(version::int) FROM flyway_schema_history")" -eq 10
+          test "$($C exec -T db psql -U orders -d orders -tAc "SELECT max(version::int) FROM flyway_schema_history")" -eq 13
+          # v9: V13 crea los testimonios con los 3 integrantes del equipo (no toca datos existentes).
+          test "$($C exec -T db psql -U orders -d orders -tAc "SELECT count(*) FROM testimonials WHERE kind = 'TEAM'")" -eq 3
+          # v7: V11 no bloquea a nadie (cuentas existentes con el correo verificado) y V12 crea los pagos.
+          test "$($C exec -T db psql -U orders -d orders -tAc "SELECT count(*) FROM app_users WHERE NOT email_verified")" -eq 0
+          test "$($C exec -T db psql -U orders -d orders -tAc "SELECT to_regclass('public.payments') IS NOT NULL")" = "t"
           # V10 solo crea user_preferences: no toca usuarios ni hashes (el idioma por defecto es español).
           test "$($C exec -T db psql -U orders -d orders -tAc "SELECT to_regclass('public.user_preferences') IS NOT NULL")" = "t"
           test "$($C exec -T db psql -U orders -d orders -tAc "SELECT display_name FROM app_users WHERE username = 'admin'")" = "Administración Polymer"
           test "$($C exec -T db psql -U orders -d orders -tAc "SELECT count(*) FROM products WHERE brand = 'Polymer'")" -ge 1
           python tools/platform_smoke.py --demo-password-file "$NEW/secrets/demo_password.txt"
           python tools/store_smoke.py --demo-password-file "$NEW/secrets/demo_password.txt"
+      - name: v12 · RabbitMQ migrado a polymer (usuario, exchange y colas) sin perder los mensajes pendientes de la v6
+        shell: bash
+        run: |
+          set -euo pipefail
+          C="docker compose -f $RUNNER_TEMP/Descargas/POLYMER/docker-compose.yml"
+          for i in $(seq 1 60); do
+            Q=$($C exec -T rabbitmq rabbitmqctl -q list_queues name messages --no-table-headers)
+            DLQ=$(echo "$Q" | awk '$1 == "polymer.notifications.dlq" { print $2 }')
+            if ! echo "$Q" | grep -q '^hexaorders\.' && [ "${DLQ:-0}" -ge 2 ]; then break; fi
+            sleep 3
+          done
+          echo "$Q"
+          if echo "$Q" | grep -q '^hexaorders\.'; then echo "Quedan colas hexaorders.*" >&2; exit 1; fi
+          echo "$Q" | grep -q '^polymer\.notifications[[:space:]]'
+          # Los 2 mensajes pendientes de la v6 llegaron: el de la DLQ directamente y el de la cola (no es un
+          # evento válido) tras los reintentos del consumidor de POLYMER.
+          test "${DLQ:-0}" -ge 2
+          USERS=$($C exec -T rabbitmq rabbitmqctl -q list_users --no-table-headers | cut -f1)
+          echo "$USERS" | grep -qx polymer
+          if echo "$USERS" | grep -qx hexaorders; then echo "El usuario heredado hexaorders sigue existiendo" >&2; exit 1; fi
+          if $C exec -T rabbitmq rabbitmqctl -q list_exchanges name --no-table-headers | grep -q '^hexaorders\.'; then
+            echo "Quedan exchanges hexaorders.*" >&2; exit 1
+          fi
+          $C logs rabbitmq order-api 2>&1 | grep -E 'POLYMER: usuario|RabbitMQ: [0-9]+ mensajes trasladados' || true
+          echo "RabbitMQ: usuario polymer (misma contraseña), exchange y colas polymer.*, mensajes de la v6 conservados"
+          # Los 2 mensajes de prueba ya cumplieron su función: se retiran de la DLQ para que las comprobaciones
+          # siguientes (integration_smoke exige la DLQ vacía) partan de un estado limpio.
+          $C exec -T rabbitmq rabbitmqctl -q purge_queue polymer.notifications.dlq
       - name: change-password para PostgreSQL, Grafana y RabbitMQ (copia, verificación y servicios sanos)
         run: |
           $new = Join-Path $env:RUNNER_TEMP 'Descargas/POLYMER'
@@ -335,3 +440,43 @@ jobs:
           docker ps -a
           docker volume ls
           for c in $(docker ps -aq); do echo "== $(docker inspect -f '{{.Name}}' $c)"; docker logs --tail 60 $c 2>&1 | tail -60; done
+          echo "== Migración del usuario de RabbitMQ (líneas POLYMER: y errores de rabbitmqctl)"
+          docker logs polymer-rabbitmq-1 2>&1 | grep -E -B2 -A6 'POLYMER:|Error:|error:' | head -80 || true
+
+  # v11 · Infraestructura AWS (Terraform). NO usa credenciales ni crea recursos: formato, validación,
+  # `terraform test` con proveedor simulado, sintaxis del user-data y del Caddyfile (imagen real de Caddy).
+  terraform-aws:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: infra/aws/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
+          terraform_wrapper: false
+      - name: terraform fmt / init / validate / test (sin cuenta de AWS)
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false -input=false
+          terraform validate
+          terraform test
+      - name: El ZIP del código no lleva secretos ni estado
+        run: |
+          zip=.build/polymer-source.zip
+          test -f "$zip"
+          if unzip -Z1 "$zip" | grep -E '^(secrets/|\.env$|\.git/)|tfstate|google-oauth.*\.json|client_secret.*\.json'; then
+            echo "El ZIP contiene archivos privados" >&2; exit 1
+          fi
+          echo "ZIP limpio: $(unzip -Z1 "$zip" | wc -l) archivos"
+      - name: user-data (bash -n) y Caddyfile (caddy validate con caddy:2.10)
+        run: |
+          render() { echo "$1" | terraform console | sed '1d;$d'; }
+          caddy='templatefile("templates/Caddyfile.tftpl", {domain="polymer.example.com", www_domain="www.polymer.example.com", letsencrypt_email="avisos@example.com"})'
+          render "$caddy" > /tmp/Caddyfile
+          render "templatefile(\"templates/user-data.sh.tftpl\", {region=\"us-east-1\", bucket=\"b\", archive_key=\"source/x.zip\", domain=\"203-0-113-10.sslip.io\", public_url=\"https://203-0-113-10.sslip.io\", mode=\"full\", swap_gb=4, letsencrypt_email=\"\", google_parameter=\"/polymer/google-oauth-json\", caddyfile=$caddy})" > /tmp/user-data.sh
+          bash -n /tmp/user-data.sh
+          grep -q 'tools/polymer.ps1 start -Mode full -AssumeYes' /tmp/user-data.sh
+          docker run --rm -v /tmp/Caddyfile:/etc/caddy/Caddyfile:ro caddy:2.10 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile

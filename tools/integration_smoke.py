@@ -23,6 +23,7 @@ import argparse
 import base64
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -110,7 +111,7 @@ def new_customer():
     anon.refresh_csrf()
     anon.call('POST', '/api/auth/register', {'username': f'v5_{suffix}', 'displayName': 'Cliente v5',
                                             'email': email, 'password': 'faro lento nube cobre 2026'}, expect=201)
-    return Session().login(f'v5_{suffix}', 'faro lento nube cobre 2026'), email
+    return Session().login(f'v5_{suffix}', 'faro lento nube cobre 2026', email=email), email
 
 
 def place_order(customer, products=None):
@@ -159,20 +160,40 @@ def check():
     customer, email = new_customer()
     order, headers = place_order(customer)
     short = order['id'][:8]
-    messages = eventually(f'correos de {email} en Mailpit', lambda: (lambda m: m if len(m) >= 2 else None)(mails_to(email)), timeout=90)
+    # v7: el primer correo del cliente nuevo es su código de verificación («123456 es tu código…»); aquí cuentan los del pedido.
+    order_mails = lambda: [m for m in mails_to(email) if not re.match(r'^\d{6} ', m['Subject'])]
+    messages = eventually(f'correos de {email} en Mailpit', lambda: (lambda m: m if len(m) >= 2 else None)(order_mails()), timeout=90)
     subjects = sorted(m['Subject'] for m in messages)
+    ok(any(re.match(r'^\d{6} es tu código de verificación de POLYMER$', m['Subject']) for m in mails_to(email)),
+       'v7: el código de 6 dígitos para confirmar el correo llegó por correo (Mailpit)')
     ok(any('recibido' in s for s in subjects) and all(short in s for s in subjects),
        f'Mailpit capturó las notificaciones del pedido {short}: {subjects}')
-    rabbit = ('hexaorders', secret('rabbitmq_password'))
-    queue = get_json(f'{RABBITMQ}/api/queues/%2F/hexaorders.notifications', auth=rabbit)
+    rabbit = ('polymer', secret('rabbitmq_password'))
+    queue = get_json(f'{RABBITMQ}/api/queues/%2F/polymer.notifications', auth=rabbit)
     ok(queue['consumers'] >= 1 and queue.get('message_stats', {}).get('ack', 0) >= 2,
-       f'RabbitMQ: la cola hexaorders.notifications tiene consumidor y {queue["message_stats"]["ack"]} mensajes confirmados')
-    dlq = get_json(f'{RABBITMQ}/api/queues/%2F/hexaorders.notifications.dlq', auth=rabbit)
+       f'RabbitMQ: la cola polymer.notifications tiene consumidor y {queue["message_stats"]["ack"]} mensajes confirmados')
+    dlq = get_json(f'{RABBITMQ}/api/queues/%2F/polymer.notifications.dlq', auth=rabbit)
     # RabbitMQ 4 añade x-queue-type a los argumentos: solo se exige que la DLQ no reenvíe a otra DLX.
     ok(dlq.get('messages', 0) == 0 and dlq.get('durable') and 'x-dead-letter-exchange' not in dlq.get('arguments', {}),
        f"La cola de mensajes fallidos (DLQ) existe, es durable y está vacía (mensajes: {dlq.get('messages')}, argumentos: {dlq.get('arguments')})")
-    exchange = get_json(f'{RABBITMQ}/api/exchanges/%2F/hexaorders.events', auth=rabbit)
-    ok(exchange['type'] == 'topic' and exchange['durable'], 'Exchange hexaorders.events (topic, durable)')
+    exchange = get_json(f'{RABBITMQ}/api/exchanges/%2F/polymer.events', auth=rabbit)
+    ok(exchange['type'] == 'topic' and exchange['durable'], 'Exchange polymer.events (topic, durable)')
+    print('v7 · Boleta por correo tras un pago en línea (pago → outbox → RabbitMQ → consumidor → SMTP)')
+    products = customer.call('GET', '/api/catalog/products', expect=200)[1]
+    item = min((p for p in products if p['stock'] >= 2), key=lambda p: p['price'])
+    status, paid_order, _ = customer.call('POST', '/api/shop/orders', {'items': [{'productId': item['id'], 'quantity': 1}],
+                                          'deliveryMethod': 'PICKUP', 'paymentMethod': 'CARD'}, headers={'Idempotency-Key': f'v7-{uuid.uuid4().hex[:20]}'})
+    ok(status == 201, 'Pedido con pago con tarjeta creado')
+    _, paid, _ = customer.call('POST', f'/api/shop/orders/{paid_order["id"]}/payment/card',
+                               {'number': '5555 5555 5555 4444', 'holder': 'Cliente v5', 'expMonth': 12, 'expYear': 2031, 'cvv': '321'}, expect=200)
+    receipt_mail = eventually(f'boleta {paid["receipt"]} en Mailpit',
+                              lambda: next((m for m in mails_to(email) if m['Subject'].startswith(f'Boleta {paid["receipt"]}')), None), timeout=90)
+    detail = get_json(f'{MAILPIT}/api/v1/message/{receipt_mail["ID"]}')
+    ok('IGV (18 %)' in detail.get('Text', '') and '<table' in detail.get('HTML', '') and 'Op. gravada' in detail.get('Text', ''),
+       f'Correo «{receipt_mail["Subject"]}» con la boleta en texto y HTML (base imponible, IGV y total)')
+    paid_metric = eventually('polymer_payments_total en Prometheus',
+                             lambda: (lambda v: v if v and v[0] >= 1 else None)(prom('sum(polymer_payments_total{outcome="paid"})')), timeout=45)
+    ok(paid_metric[0] >= 1, f'Prometheus: polymer_payments_total{{outcome="paid"}} = {paid_metric[0]:.0f}')
     eventually('outbox vacío', lambda: prom('polymer_outbox_pending') == [0.0], timeout=60)
     ok(True, 'Outbox transaccional vacío: todos los eventos confirmados por el broker')
 
@@ -211,7 +232,7 @@ def check():
     ok(exported > 0, f'El collector exportó {exported:.0f} spans a Tempo (otelcol_exporter_sent_spans)')
     nginx = eventually('métricas de Nginx', lambda: sum(prom('nginx_requests_total')), timeout=60)
     ok(nginx > 0, f'Métricas del gateway Nginx vía collector: {nginx:.0f} peticiones (nginx_requests_total)')
-    ok(sum(prom('rabbitmq_queue_messages_ready{queue="hexaorders.notifications"}') or [0]) >= 0 and prom('rabbitmq_identity_info'),
+    ok(sum(prom('rabbitmq_queue_messages_ready{queue="polymer.notifications"}') or [0]) >= 0 and prom('rabbitmq_identity_info'),
        'Métricas de RabbitMQ en Prometheus (plugin rabbitmq_prometheus)')
 
     print('Loki (logs centralizados por Grafana Alloy)')
@@ -256,7 +277,9 @@ def recovered(state: Path):
     saved = json.loads(state.read_text(encoding='utf-8'))
     eventually('outbox vacío tras la recuperación', lambda: prom('polymer_outbox_pending') == [0.0], timeout=120)
     ok(True, 'El outbox se vació al volver RabbitMQ')
-    messages = eventually('correos del pedido retenido', lambda: (lambda m: m if len(m) >= 2 else None)(mails_to(saved['email'])), timeout=120)
+    # v7: el código de verificación del cliente nuevo también está en su buzón; aquí cuentan los del pedido.
+    order_mails = lambda: [m for m in mails_to(saved['email']) if not re.match(r'^\d{6} ', m['Subject'])]
+    messages = eventually('correos del pedido retenido', lambda: (lambda m: m if len(m) >= 2 else None)(order_mails()), timeout=120)
     ok(all(saved['order'][:8] in m['Subject'] for m in messages), f'Llegaron los correos del pedido creado durante la caída ({len(messages)})')
     anon = Session()
     anon.call('GET', '/api/catalog/products', expect=200)

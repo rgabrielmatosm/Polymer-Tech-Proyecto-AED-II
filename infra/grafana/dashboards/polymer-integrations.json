@@ -134,7 +134,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(rabbitmq_queue_messages{queue=\"hexaorders.notifications.dlq\"}) or vector(0)",
+          "expr": "sum(rabbitmq_queue_messages{queue=\"polymer.notifications.dlq\"}) or vector(0)",
           "instant": true
         }
       ],

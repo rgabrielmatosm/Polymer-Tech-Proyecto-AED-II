@@ -214,4 +214,4 @@ Tabla completa (39 páginas + laboratorio, rol, contenido y API de cada una), UR
   - la intro se repite con `?intro=1`; con `?intro=0` se desactiva en esa visita.
 - **Selectores nuevos que usan las pruebas** (`intro-e2e.js`): `#polymer-intro`, `.intro__word span`, «Entrar con sonido», «Omitir intro», `#sound-toggle`, `.pm-footer`, `.pm-social`, `.fly-dot`, `#cart-button.is-bumped`, `.order-thanks` (confirmación animada).
 - **Pruebas e intro:** las pruebas que no prueban la intro la marcan como vista con `addInitScript` (`sessionStorage['polymer.intro.seen'] = '1'`). Haz lo mismo si escribes una prueba nueva.
-- **Identificadores heredados:** no renombres el usuario ni las colas de RabbitMQ (`hexaorders.*`), ni las migraciones Flyway ya publicadas: están ligados a datos persistentes (docs/MIGRACION_POLYMER.md).
+- **Identificadores heredados:** no edites las migraciones Flyway ya publicadas (Flyway valida su suma de comprobación). RabbitMQ ya usa `polymer` / `polymer.*`; las instalaciones anteriores se migran solas (docs/MIGRACION_POLYMER.md, sección 5).

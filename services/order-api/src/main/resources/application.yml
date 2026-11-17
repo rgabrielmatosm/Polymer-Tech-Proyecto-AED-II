@@ -11,8 +11,8 @@ spring:
   rabbitmq:
     host: ${RABBITMQ_HOST:rabbitmq}
     port: 5672
-    # Usuario heredado: RabbitMQ lo guardó en su volumen al inicializarse (docs/MIGRACION_POLYMER.md).
-    username: ${RABBITMQ_USER:hexaorders}
+    # En volúmenes de versiones anteriores, infra/rabbitmq/polymer-entrypoint.sh crea este usuario (docs/MIGRACION_POLYMER.md).
+    username: ${RABBITMQ_USER:polymer}
     publisher-confirm-type: correlated
     publisher-returns: true
     connection-timeout: 3s
@@ -52,6 +52,9 @@ spring:
 server:
   port: 8080
   shutdown: graceful
+  # v7: detrás del gateway Nginx (y del Nginx del host en AWS) se respetan X-Forwarded-Proto/Host de proxies
+  # internos: la URL de retorno de Google y la cookie Secure usan el esquema y el host públicos.
+  forward-headers-strategy: native
   error:
     include-message: never
     include-stacktrace: never

@@ -17,12 +17,17 @@ import java.util.UUID;
  * JSON, UTF-8, schemaVersion 1. Documented in docs/ASYNCHRONOUS_EVENTS.md.
  */
 public final class EventContract {
-    // Identificadores heredados a propósito (docs/MIGRACION_POLYMER.md): el exchange y las colas viven
-    // en el volumen de RabbitMQ con sus mensajes pendientes; renombrarlos los dejaría huérfanos.
-    public static final String EXCHANGE = "hexaorders.events";
-    public static final String DEAD_LETTER_EXCHANGE = "hexaorders.events.dlx";
-    public static final String NOTIFICATIONS_QUEUE = "hexaorders.notifications";
-    public static final String NOTIFICATIONS_DLQ = "hexaorders.notifications.dlq";
+    public static final String EXCHANGE = "polymer.events";
+    public static final String DEAD_LETTER_EXCHANGE = "polymer.events.dlx";
+    public static final String NOTIFICATIONS_QUEUE = "polymer.notifications";
+    public static final String NOTIFICATIONS_DLQ = "polymer.notifications.dlq";
+
+    // Nombres de las versiones anteriores (HexaOrders). Solo los usa LegacyTopologyMigration: traslada sus
+    // mensajes pendientes a las colas de POLYMER y luego los borra (docs/MIGRACION_POLYMER.md).
+    public static final String LEGACY_EXCHANGE = "hexaorders.events";
+    public static final String LEGACY_DEAD_LETTER_EXCHANGE = "hexaorders.events.dlx";
+    public static final String LEGACY_NOTIFICATIONS_QUEUE = "hexaorders.notifications";
+    public static final String LEGACY_NOTIFICATIONS_DLQ = "hexaorders.notifications.dlq";
     public static final String DEAD_LETTER_ROUTING_KEY = "notifications.dead";
     public static final String CONTENT_TYPE = "application/json";
 

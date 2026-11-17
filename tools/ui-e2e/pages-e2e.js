@@ -270,7 +270,40 @@ async function visitAll(session, role, ids) {
     for (const target of ['/', '/catalogo.html', `/producto.html?id=${ids.product}`, '/ofertas.html', '/ayuda.html', '/contacto.html']) {
       await mobile.page.goto(`${BASE_URL}${target}`);
       await rendered(mobile.page);
-      check(!(await mobile.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)), `Móvil (390 px): ${target} sin desplazamiento horizontal`);
+      const measure = () => mobile.page.evaluate(() => {
+        const vw = window.innerWidth;
+        if (document.documentElement.scrollWidth <= vw + 1) return '';
+        // Culpables reales primero: lo que sobresale SIN un contenedor que lo recorte (overflow hidden/clip dentro
+        // de la pantalla). Lo recortado (p. ej. las tarjetas del carrusel fuera de vista) no causa el desplazamiento.
+        const clippedByAncestor = (node) => {
+          for (let p = node.parentElement; p; p = p.parentElement) {
+            if (/(hidden|clip)/.test(getComputedStyle(p).overflowX) && p.getBoundingClientRect().right <= vw + 1) return true;
+          }
+          return false;
+        };
+        const label = (node) => `${node.tagName.toLowerCase()}.${String(node.className && node.className.baseVal !== undefined ? node.className.baseVal : node.className).trim().replace(/\s+/g, '.')}`;
+        const real = [];
+        const clipped = [];
+        for (const node of document.querySelectorAll('body *')) {
+          const box = node.getBoundingClientRect();
+          if (box.width <= 0 || box.right <= vw + 1) continue;
+          const text = (node.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+          (clippedByAncestor(node) ? clipped : real).push(`${label(node)} (${Math.round(box.left)}→${Math.round(box.right)} px${text ? ` «${text}»` : ''})`);
+        }
+        return `${document.documentElement.scrollWidth} px · sin recortar: ${real.slice(0, 6).join(', ') || 'ninguno'}`
+          + ` · recortados: ${clipped.length}`;
+      });
+      let wide = await measure();
+      if (wide) {
+        // Un desborde que desaparece al terminar las animaciones de entrada no es un fallo de maquetación:
+        // se deja constancia (con el culpable) y solo falla si persiste.
+        await mobile.page.waitForTimeout(1500);
+        const again = await measure();
+        if (!again) console.log(`  ⚠ Móvil (390 px): ${target} se desbordó un instante y se corrigió solo — ${wide}`);
+        wide = again;
+      }
+      if (wide) await mobile.page.screenshot({ path: path.join(OUT, 'v7-movil-desborde.png'), fullPage: true });
+      check(!wide, `Móvil (390 px): ${target} sin desplazamiento horizontal${wide ? ` — ${wide}` : ''}`);
     }
     await mobile.page.click('.nav-toggle');
     check(await mobile.page.isVisible('#primary-nav a[href="/ofertas.html"]'), 'Móvil: el menú desplegable muestra la navegación');
